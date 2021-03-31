@@ -1,0 +1,2 @@
+# PACMEC
+PIM - AMS - CRM - MAP - ERP - CMS
