@@ -38,28 +38,32 @@ Muchas empresas empresariales utilizan soluciones de recursos para administrar s
 
 La mayoría de las empresas utilizan un sistema de gestión de contenido para ejecutar su sitio web, ya que un CMS proporciona las herramientas para administrar su contenido de forma dinámica e incluye capacidades como comercio electrónico, personalización, contenido dirigido, flujo de trabajo y más. Si desea poder editar su sitio web y productos de comercio electrónico a través de un centro de administración y utilizar las funciones antes mencionadas para ayudar a llegar a sus clientes, un sitio web impulsado por CMS es esencial. En este caso de uso, el CMS controlaría y almacenaría tanto el contenido como los activos del sitio web, además de toda la información del producto de comercio electrónico.
 
+#### Proudly Developed by [FelipheGomez]
 
-##### Nota del autor
-As [John Gruber] writes on the [Markdown site][df1]
+> Si te gustó este desarrollo no dudes en 
+> apoyarme para sacar nuevos productos
+> Gracias por tu aporte
+> Si no puedes aportar no te preocupes, disfrutalo y deja tus comentarios.
 
-> The overriding design goal for Markdown's
-> formatting syntax is to make it as readable
-> as possible. The idea is that a
-> Markdown-formatted document should be
-> publishable as-is, as plain text, without
-> looking like it's been marked up with tags
-> or formatting instructions.
-
-This text you see here is *actually- written in Markdown! To get a feel
-for Markdown's syntax, type some text into the left window and
-watch the results in the right.
+[FelipheGomez]: <https://github.com/FelipheGomez>
 
 ## Requisitos
 
-Dillinger uses a number of open source projects to work properly:
+Recuerda tener en cuenta los requisitos del alojamiento/servidor y la base de datos-
 
 - PHP 7.0 o superior con controladores PDO habilitados para uno de estos sistemas de base de datos:
 - MySQL 5.6 / MariaDB 10.0 o superior para características espaciales en MySQL
 - PostgreSQL 9.1 o superior con PostGIS 2.0 o superior para características espaciales
 - SQL Server 2012 o superior (2017 para compatibilidad con Linux)
 - SQLite 3.16 o superior (las características espaciales NO son compatibles)
+
+## Instalacion
+
+- Descarga `PACMEC` y extrae el contenido en tu carpeta final. 
+    *Nota*: Si estas utilizando una consola SSH realiza lo siguiente:
+    ```sh
+    cd public_path
+    git clone https://github.com/Feliphegomez/PACMEC.git
+    ```
+- Ingresa con tu navegador preferido a: `https://misitio.com`
+- Sigue los pasos del asistente.
