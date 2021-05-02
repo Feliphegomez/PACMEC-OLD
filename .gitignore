@@ -1,6 +1,6 @@
 .ftpconfig
 .ftpignore
-.pacmec\.prv\settings.php
-.pacmec\themes\*
-.pacmec\plugins\*
-public\*
+.pacmec/.prv/settings.php
+.pacmec/themes/*
+.pacmec/plugins/*
+public/*
