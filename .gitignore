@@ -2,6 +2,7 @@
 .ftpignore
 .pacmec/.prv/settings.php
 .pacmec/themes/*
+!.pacmec/themes/pacmec-default
 .pacmec/plugins/*
 !.pacmec/plugins/pacmec-hello.php
 public/*
