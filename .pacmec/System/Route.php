@@ -92,7 +92,7 @@ class Route extends \PACMEC\System\ModeloBase
 			$this->setAll(Self::FetchObject(
 				"SELECT * FROM {$this->getTable()}
 					WHERE `{$column}`=?
-					AND `host` IN ('*', ?)
+					AND `host` IN ('*', ?) ORDER BY `host` desc
 					"
 				, [
 					$val,

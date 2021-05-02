@@ -384,7 +384,7 @@ class Run
   {
     try {
       global $PACMEC;
-      foreach($PACMEC['DB']->FetchAllObject("SELECT * FROM `{$PACMEC['DB']->getTableName('options')}` WHERE `host` IN (?,?) ORDER BY `host` ASC", ['*', $PACMEC['host']]) as $option){
+      foreach($PACMEC['DB']->FetchAllObject("SELECT * FROM `{$PACMEC['DB']->getTableName('options')}` WHERE `host` IN (?,?) ORDER BY `host` desc", ['*', $PACMEC['host']]) as $option){
         $PACMEC['options'][$option->option_name] = Self::pacmec_parse_value($option->option_value);
       }
       foreach($PACMEC['DB']->FetchAllObject("SELECT * FROM `{$PACMEC['DB']->getTableName('permanents_links')}` ", []) as $option){
