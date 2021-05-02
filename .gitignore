@@ -3,4 +3,5 @@
 .pacmec/.prv/settings.php
 .pacmec/themes/*
 .pacmec/plugins/*
+!.pacmec/plugins/pacmec-hello.php
 public/*

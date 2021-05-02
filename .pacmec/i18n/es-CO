@@ -1,0 +1,293 @@
+/**
+ * Translation for the language: es-CO
+ * Text Domain: General
+ *
+ * Version: 0.1
+ * Author: FelipheGomez
+ * Author URI: https://github.com/FelipheGomez
+ * (email : feliphegomez@gmail.com)
+ */
+
+undefined=                                  Desconocido
+required_field=                             Campo obligatorio
+select_an_option=                           Seleccione una opcion
+save_changes_btn=                           Guardar cambios
+principal_menu=                             Menu principal
+info_menu=                                  Información
+no_found=                                   No encontrado o no esta activo el contenido
+title=                                      Titulo
+content=                                    Contenido
+btn=                                        Botón
+alls=                                       Todo
+description=                                Descripción
+filter_to=                                  Filtrar
+others_filters=                             Otros filtros
+showing_info_pagination=                    Mostrando
+features=                                   Caracteristicas
+glossary=                                   Lenguajes
+gift=                                       Regalo
+categories=                                 Categorias
+category=                                   Categoria
+information=                                Información
+subscribe=                                  Suscribir
+privacy_policy=                             Política de privacidad
+terms_and_conditions=                       Términos y condiciones
+return_policy=                              Política de devoluciones
+newsletter=                                 Boletin informativo
+conditions_of_use=                          Condiciones de uso
+term_of_use=                                Terminos de uso
+status=                                     Estado
+created=                                    F. creacion
+detail=                                     Detalle
+details=                                    Detalles
+country=                                    Pais
+countries=                                  Paises
+cities=                                     Cuidades
+city=                                       Cuidad
+email_invalid=                              Correo invalido
+company_name=                               Empresa
+form_invalid=                               Revisa los datos e intenta nuevamente
+
+captcha_r_error=                            Ocurrio un error con el puzzle, intenta nuevamente.
+captcha_r_success=                          Puzzle comprobado con éxito.
+captcha_r_no_detect=                        El puzzle no fue encontrado.
+captcha_r_wrong_answer=                     Respuesta incorrecta, intenta nuevamente.
+captcha_r_already_checked=                  El puzzle ya fue solucionado, intenta nuevamente.
+captcha_r_puzzle_expired=                   El puzzle a expirado
+captcha_r_hash-fail=                        Key-H Invalido
+
+solvemedia_unlock_tease_header=             Ingresa la siguiente frase para continuar
+solvemedia_unlock_instructions=             Ingrese la frase para continuar
+solvemedia_unlock_button_text=              Continuar
+
+hello=                                      Hola
+hello_wor=                                  Hola mundo
+hello_wor!=                                 Hola mundo!
+hello %s=                                   Hola %s
+system=                                     Sistema
+test=                                       Prueba
+
+MTS=                                        Metros
+UNID=                                       Unidad
+KG=                                         Kilos
+CAJA=                                       Caja
+
+home=                                       Página principal
+about=                                      Sobre nosotros
+contact_us=                                 Contacto
+call_us=                                    Contactanos:
+blog=                                       Blog
+you_might_also_like=                        También podría gustarte
+business_address=                           Nuestra direccion
+business_phone_number=                      Contactanos
+business_email=                             Escribenos
+
+social_menu=                                Redes sociales
+share_social=                               Comparte
+facebook=                                   Facebook
+instagram=                                  Instagram
+github=                                     GitHub
+youtube=                                    YouTube
+twitter=                                    Twitter
+
+help_center=                                Centro de ayuda
+customer_service=                           Servicio al Cliente
+support_hours_title=                        Soporte 24/7
+support_hours_content=                      Soporte 24horas 7dias
+
+
+me_account_descr=                           Desde el panel de su cuenta. puede verificar y ver fácilmente sus informacion, administrar sus direcciones de envío, editar su contraseña y los detalles de su cuenta, entre otros.
+
+saveprofile_r_success=                      Informacion guardada correctamente
+saveprofile_r_error=                        Ocurrio un problema guardando la información, intente nuevamente
+
+change_pass_r_success=                      Contraseña actualizada correctamente
+change_pass_r_error=                        Ocurrio un error, intenta nuevamente.
+change_pass_r_error_not_match=              Las contraseñas no coinciden
+change_pass_r_invalid_credentials=          Verifique que sus datos sean correctos
+change_pass_r_auth_invalid=                 Contraseña actual incorrecta
+
+saveaccess_r_success=                       Datos actualizados correctamente
+saveaccess_r_error=                         Ocurrio un error, intenta nuevamente.
+saveaccess_r_match=                         Ya existe una cuenta con esta Informacion
+saveaccess_r_invalid_credentials=           Contraseña incorrecta
+
+pacmec_signin=                              Iniciar sesion
+signin=                                     Ingresar
+signin_nick_label=                          Usuario o Correo electronico
+signin_nick_placeholder=                    Ingrese su usuario o correo electronico
+signin_hash_label=                          Contraseña
+signin_hash_placeholder=                    Tu clave
+signin_r_success=                           Sesion iniciada con exito
+signin_r_error=                             Ocurrio un error, intenta nuevamente.
+signin_r_inactive=                          Cuenta inactiva.
+signin_r_no_exist=                          La cuenta no existe
+signin_r_invalid_credentials=               Verifique que sus datos sean correctos
+signin_r_invalid_info=                      Informacion incompleta o invalida
+signgin_customer_in=                        Eres Cliente?
+signgin_customer_in_btn=                    Haga clic aquí para ingresar
+
+signout=                                    Salir
+
+forgotten_password_slug=                    recuperar-cuenta
+pacmec_forgotten_password=                  Recuperar cuenta
+pacmec_forgotten_password_txt=              Ingrese su correo electronico o usuario para enviar el enlace de recuperacion
+recover_password=                           Solicitud de recuperacion de contraseña
+recover_password_from=                      Recibimos una solicitud para restablecer tu contraseña, haz clic sobre el siguiente botón.
+recover_password_text=                      Si no quieres restablecer tu contraseña, ignora este mensaje y continúa ingresando con tu contraseña actual.
+recover_password_r_success=                 Enviamos un link de recuperacion a tu correo.
+recover_password_r_fail=                    Ocurrio un error al tratar de enviarte el link de recuperacion, intenta nuevamente.
+register=                                   Registro
+register_btn=                               Crear cuenta
+register_r_success=                         Registro creado con exito
+register_r_fail=                            Ocurrio un error creando el usuario
+register_nick_exist=                        El usuario ya existe.
+register_email_exist=                       El correo ya esta registrado
+register_from_title_subject_start=          Bienvenido %s
+register_email_title=                       Hola %s, gracias por registrarte
+register_email_body=                        Estamos muy emocionados de que se una a nuestra comunidad! Disfruta de nuestros productos y recuerda mantener tus datos actualizados
+meregister=                                 Registro de usuario
+info_access=                                Informacion de accesso
+change_pass=                                Actualizar contraseña
+pacmec_meaccount=                           mi-cuenta
+meaccount_menu=                             Mi cuenta
+meaccount_forgotten_password=               Recuperar contraseña
+me_account=                                 Mi cuenta
+me_orders=                                  Mis ordenes
+me_payments=                                Mis pagos
+me_addresses=                               Mis direcciones
+me_account_details=                         Mis datos
+me_access_details=                          Datos de acceso
+add_address_success=                        Se creo la direccion correctamente
+add_address_fail=                           Ocurrio un error agregando la direccion
+remove_address_success=                     Direccion eliminada con exito.
+remove_address_fail=                        Ocurrio un error al quitar la direccion
+
+nick_or_email=                              Usuario o Correo electronico
+userid=                                     Id
+username=                                   Nick/usuario
+email=                                      Correo electronico
+names=                                      Nombre(s)
+surname=                                    Apellidos(s)
+identification_type=                        Tipo de Documento
+identification_number=                      Num. Doc
+phone=                                      Teléfono(s)
+mobile=                                     Móvil(es)
+pass1=                                      Nueva contraseña
+pass2=                                      Confirme la contraseña
+current_pass=                               Contraseña actual
+hash=                                       Contraseña
+confirm_hash=                               Confirme la contraseña
+permissions=                                Permisos
+
+shop=                                       Tienda
+shop_title=                                 Explora nuestra tienda
+shop_slug=                                  explorar-tienda
+cart_slug=                                  carrito
+cart_btn=                                   Ir al carrito
+shopping_cart=                              Carrito de compras
+cart_title=                                 Carrito
+view_products_slug=                         ver-producto
+stores=                                     Tiendas
+money_return_title=                         Devolución
+free_shipping_title=                        Envío gratis
+free_shipping_content=                      Envíos gratis
+money_return_content=                       Garantía de devolución
+discount=                                   Descuento
+discounts=                                  Descuentos
+order_discount_title=                       Orden de descuento
+order_discount_content=                     Descuentos especiales
+new_arrivals=                               Los recién llegados
+products=                                   Productos
+products_view=                              Viendo producto
+sku_ref=                                    SKU
+common_names=                               Tambien conocido como:
+delivery_territory=                         Entrega en todo el territorio
+unid_product_view=                          Este producto se vende en
+price_filter=                               Filtrar por precio
+order_by_sku_asc=                           Codigo ASC
+order_by_price_asc=                         Precio ASC
+order_by_price_desc=                        Precio DESC
+products_results=                           Productos encontrados
+in_promo=                                   En oferta
+add_to_cart=                                Añadir al carrito
+add_to_cart_success=                        Agregado al carrito
+add_to_cart_fail=                           No se pudo agregar al carrito
+update_to_cart=                             Actualizar carrito
+update_to_cart_success=                     Carrito actualizado correctamente
+update_to_cart_fail=                        Ocurrio un error actualizando el carrito
+products_embeded_slug=                      compartir-producto
+delivery_info=                              Información de entrega
+price=                                      Precio
+total_available_from_site=                  Cantidad disponible desde sitio
+total_paid=                                 Total pagado
+subtotal=                                   Subtotal
+total=                                      Total
+outstanding_balance=                        Saldo pendiente
+shipping_details=                           Detalles de envío
+shipping=                                   Envío
+payments=                                   Pagos/Abonos
+partial_payment=                            Pago parcial
+full_payment=                               Pago completo
+product_not_available=                      Sin Stock
+finish_order=                               NONONONONONONONONO
+site_create_order_fail=                     Error creando la orden
+order_in_black=                             La orden no tiene productos
+
+
+checkout_slug=                              checkout
+checkout_btn=                               Terminar orden
+checkout_title=                             Nueva orden
+
+ORD_SLUG=                                   ORD-
+order=                                      Orden
+order_ref=                                  Orden REF
+your_order=                                 Tu orden
+payment_date=                               F. pago
+order_view_slug=                            ver-orden
+order_view_embeded_slug=                    ver-orden-single
+order_pay_slug=                             pagar-ahora
+order_pay_btn=                              Pagar ahora
+order_view=                                 Ver orden
+order_details=                              Detalles de la orden
+order_info=                                 Informacion de contacto
+order_not_match=                            Orden no encontrada
+order_payment_not_available=                Pago de la orden no disponible
+billing_address=                            Direccion de envio
+shipping_address=                           Direccion de entrega
+address=                                    Direccion
+add_address=                                Agregar direccion
+place_order=                                Realizar pedido
+shipping_info=                              Informacion de envío
+shipping_costs_title=                       Costos de envío
+shipping_costs_txt=                         Se agregaran en caso de ser necesario despues de que sea revisada la orden por un asesor.
+shipping_policy=                            Informacion de envío
+shipping_policy_title=                      Politicas de envio de nuestro sitio
+shipping_policy_content=                    Los envíos serán facturados teniendo en cuenta varios parametros como peso, tamaño, lugar de destino, entre otros.
+
+reviews_or_comments=                        Comentarios
+add_a_review_or_comment=                    Agregar comentario
+email_not_required_fields_marked_ask=       Su dirección de correo electrónico no será publicada. Los campos obligatorios están marcados *
+add_comment_title=                          Agregar comentario
+add_comment_btn=                            Agregar comentario
+add_comment_r_success=                      Comentario agregado con exito
+add_comment_r_fail=                         Comentario agregado con exito
+
+display_name=                               Nombre a mostrar
+vote=                                       Calificacion
+comment=                                    Comentario
+
+order_create_from_site=                     Creada desde la web
+order_create_success=                       Orden creada con exito
+order_create_fail=                          Ocurrio un error creando la orden
+
+coupon_not_match_host=                      Cupón no compatible.
+coupon_error_applied=                       Cupón aplicado, recargue la pagina si no lo ve reflejado.
+coupon_applied=                             Cupón aplicado, recargue la pagina si no lo ve reflejado.
+coupon_expired=                             Cupón expirado
+coupon_already_redeemed=                    Cupón ya canjeado
+coupon_not_match=                           Cupón no encontrado
+coupon_apply_btn=                           Aplicar cupón
+coupon_code=                                Cod. cupón
+coupon_prev_txt=                            Tiene un cupón?
+coupon_click_apply=                         Haga clic aquí para ingresar su código
