@@ -7,3 +7,4 @@
 !.pacmec/plugins/pacmec-hello.php
 public/*
 !public/default
+!public/favicon.ico
