@@ -5,6 +5,7 @@
 !.pacmec/themes/pacmec-default
 .pacmec/plugins/*
 !.pacmec/plugins/pacmec-hello.php
+!.pacmec/plugins/pacmec-hello.php
 public/*
 !public/default
 !public/favicon.ico
