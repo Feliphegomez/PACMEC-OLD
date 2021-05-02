@@ -6,3 +6,4 @@
 .pacmec/plugins/*
 !.pacmec/plugins/pacmec-hello.php
 public/*
+!public/default
