@@ -38,8 +38,6 @@ function pacmec_PIM_activation()
    require_once PACMEC_PATH."/plugins/PIM/models/Filters.php";
 
    \add_action('route_extends_path', function(){
-
-
      // Explorar Path URI en caso de tener contenido de productos
      $_explo = explode('/', $GLOBALS['PACMEC']['path']);
      $_exploder = [];
