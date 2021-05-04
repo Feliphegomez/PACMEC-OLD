@@ -10,12 +10,14 @@
  */
 Class PacmecController extends \PACMEC\ControladorBase
 {
-	public function __construct() {
+	public function __construct()
+  {
 		parent::__construct();
 		header('Content-Type: application/json');
 	}
 
-  public function index(){
+  public function index()
+  {
 		echo json_encode($this);
 		return json_encode($this);
   }
