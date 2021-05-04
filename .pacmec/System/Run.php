@@ -474,6 +474,14 @@ class Run
         case '/pacmec-api-doc':
           throw new \Exception("No implementado para esta version.", 1);
           break;
+        case '/pacmec-update':
+          echo "Actualizando:\n";
+          echo ".";
+          $result_pacmec = exec("git pull origin main");
+          echo ".\n";
+          echo "Resultado: " . json_encode($result_pacmec);
+          exit;
+          break;
         case '/robots.txt':
           $filerobots = dirname(PACMEC_PATH) . '/robots.txt';
           if(!is_file($filerobots) || !file_exists($filerobots)) {
