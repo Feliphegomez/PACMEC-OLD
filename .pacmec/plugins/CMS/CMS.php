@@ -2,7 +2,7 @@
 /**
  * Plugin Name: CMS PACMEC
  * Text Domain: CMS
- * Description: 
+ * Description:
  *
  * Plugin URI: https://github.com/PACMEC/PACMEC-CMS
  * Version: 0.1
@@ -38,35 +38,28 @@ function pacmec_CMS_activation()
        isset($_exploder[2]) && count($_exploder)==3 && $_exploder[0] === $GLOBALS['PACMEC']['permanents_links']['%blog_read_slug%']
        || isset($_exploder[2]) && count($_exploder)==3 && $_exploder[0] === $GLOBALS['PACMEC']['permanents_links']['%blog_embeded%']
      ) {
-       /*
        if(is_numeric($_exploder[1])){
-         $search_product = new \PACMEC\System\Product((object) ['id'=>$_exploder[1]]);
-         if($search_product->isValid()){
+         $search = new \PACMEC\System\Posts((object) ['id'=>$_exploder[1]]);
+         if($search->isValid()){
            $GLOBALS['PACMEC']['route']->id = $_exploder[1];
            $GLOBALS['PACMEC']['route']->request_uri = $GLOBALS['PACMEC']['path'];
-           $GLOBALS['PACMEC']['route']->title = __a('products_view') . ' ' .$search_product->name . ' | ' . __a('sku_ref') . ': ' . $search_product->sku;
-           $GLOBALS['PACMEC']['route']->description = $search_product->description;
-           $GLOBALS['PACMEC']['route']->content = strip_tags($search_product->description);
-           $GLOBALS['PACMEC']['route']->keywords = $search_product->common_names.','.infosite('sitekeywords');;
-           $GLOBALS['PACMEC']['route']->layout = 'pages-product-view';
-           $GLOBALS['PACMEC']['route']->product = $search_product;
+           $GLOBALS['PACMEC']['route']->title = __a('blog_read') . ' ' . $search->title;
+           $GLOBALS['PACMEC']['route']->description = strip_tags($search->content);
+           $GLOBALS['PACMEC']['route']->content = strip_tags($search->content);
+           $GLOBALS['PACMEC']['route']->keywords = implode(',', explode(',', $search->tags)).','.infosite('sitekeywords');;
+           $GLOBALS['PACMEC']['route']->layout = 'pages-blog-details';
+           $GLOBALS['PACMEC']['route']->post = $search;
            $GLOBALS['PACMEC']['route']->comments_enabled = infosite('comments_enabled');
-           if($_exploder[0] === $GLOBALS['PACMEC']['permanents_links']['%products_embeded%']) {
+           if($_exploder[0] === $GLOBALS['PACMEC']['permanents_links']['%blog_embeded%']) {
              $GLOBALS['PACMEC']['route']->is_embeded = true;
-             $GLOBALS['PACMEC']['route']->layout = 'pages-product-embeded';
+             $GLOBALS['PACMEC']['route']->layout = 'pages-blog-embeded';
            }
-           pacmec_add_meta_tag('image', $search_product->thumb);
-           pacmec_add_meta_tag('og:type', 'og:product');
-           pacmec_add_meta_tag('product:plural_title', $search_product->name);
-           pacmec_add_meta_tag('ia:markup_url', infosite('siteurl').$GLOBALS['PACMEC']['path']);
-           $price = $search_product->in_promo==true?$search_product->price_promo:$search_product->price;
-           pacmec_add_meta_tag('product:price:amount', $price);
-           pacmec_add_meta_tag('product:price:currency', infosite('site_currency'));
-         }
-       }
-       */
-       exit('pendiente');
-     }
+           pacmec_add_meta_tag('image', $search->thumb);
+           pacmec_add_meta_tag('og:type', 'og:article');
+           pacmec_add_meta_tag('og:modified_time', $search->modified);
+        }
+      }
+    }
      // 1 Atributo para explorador de la tienda
      else if(isset($_exploder[0]) && count($_exploder)==1 && $_exploder[0] === $GLOBALS['PACMEC']['permanents_links']['%blog_slug%']) {
        $GLOBALS['PACMEC']['route']->id = 1;

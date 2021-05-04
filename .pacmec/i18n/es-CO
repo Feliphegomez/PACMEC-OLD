@@ -47,6 +47,7 @@ city=                                       Cuidad
 email_invalid=                              Correo invalido
 company_name=                               Empresa
 form_invalid=                               Revisa los datos e intenta nuevamente
+read_more=                                  Leer mas
 
 captcha_r_error=                            Ocurrio un error con el puzzle, intenta nuevamente.
 captcha_r_success=                          Puzzle comprobado con éxito.
@@ -77,7 +78,12 @@ about=                                      Sobre nosotros
 contact_us=                                 Contacto
 call_us=                                    Contactanos:
 blog=                                       Blog
+blog_title=                                 Nuestro Blog
 blog_slug=                                  nuestro-blog
+blog_read_slug=                             leer-blog
+blog_read=                                  Leyendo
+blog_embeded=                               compartir-articulo
+
 you_might_also_like=                        También podría gustarte
 business_address=                           Nuestra direccion
 business_phone_number=                      Contactanos
