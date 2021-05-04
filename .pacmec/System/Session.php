@@ -23,6 +23,7 @@ class Session
  	public  $permissions        = [];
  	public  $notifications      = [];
  	public  $shopping_cart      = [];
+ 	public  $emails_boxes       = [];
   public  $subtotal_cart      = 0;
   public  $remote_ip          = "";
 
@@ -202,12 +203,12 @@ class Session
  			}
  		}
     $this->permissions = array_keys($this->permissions_items);
-    $this->notifications = $GLOBALS['PACMEC']['DB']->FetchAllObject("SELECT * FROM `{$GLOBALS['PACMEC']['DB']->getTableName('notifications')}` WHERE `user_id` IN (?) AND `is_read` IN (?)", [$this->user->id, 0]);
-
+    foreach (\PACMEC\System\Notifications::get_all_by_user_id(\userID(), false) as $item) {
+      $this->notifications[] = $this->add_alert($item->data->message, $item->data->title, $item->host, strtotime($item->created), $item->id);
+    }
     foreach ($this as $k => $v) {
       $_SESSION[$k] = is_object($v) ? (Array) $v : $v;
     }
-
  	}
 
  	/**

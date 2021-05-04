@@ -58,7 +58,7 @@ class Run
 
   public static function pacmec_assets_globals()
   {
-    // add_style_head(siteinfo('siteurl')   . "/.pacmec/assets/css/pacmec.css"."?&cache=".rand(),  ["rel"=>"stylesheet", "type"=>"text/css", "charset"=>"UTF-8"], 1, false);
+    add_style_head(siteinfo('siteurl')   . "/.pacmec/assets/css/pacmec.css"."?&cache=".rand(),  ["rel"=>"stylesheet", "type"=>"text/css", "charset"=>"UTF-8"], 1, false);
     // add_style_head(siteinfo('siteurl')   . "/.pacmec/assets/css/plugins.css", ["rel"=>"stylesheet", "type"=>"text/css", "charset"=>"UTF-8"], 0.99, false);
     // add_scripts_head(siteinfo('siteurl') . "/.pacmec/assets/js/plugins.js",   ["type"=>"text/javascript", "charset"=>"UTF-8"], 1, false);
     // add_scripts_head(siteinfo('siteurl') . "/.pacmec/assets/dist/sweetalert2/sweetalert2.all.min.js",    ["type"=>"text/javascript", "charset"=>"UTF-8"], 0, false);
@@ -516,8 +516,8 @@ class Run
         pacmec_add_meta_tag('keywords', infosite('sitekeywords'));
       }
       pacmec_add_meta_tag('site_name', infosite('sitename'));
-      pacmec_add_meta_tag('og:email', infosite('business_email'));
-      pacmec_add_meta_tag('og:phone_number', infosite('business_phone_number'));
+      pacmec_add_meta_tag('og:email', strip_tags(infosite('business_email')));
+      pacmec_add_meta_tag('og:phone_number', strip_tags(infosite('business_phone_number')));
       pacmec_add_meta_tag('language', $GLOBALS['PACMEC']['lang']);
       pacmec_add_meta_tag('url', infosite('siteurl').$GLOBALS['PACMEC']['path']);
 

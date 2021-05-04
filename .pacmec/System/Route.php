@@ -123,9 +123,11 @@ class Route extends \PACMEC\System\ModeloBase
 						$check = \validate_permission($arg['permission_access']);
 						if($check == false){
 							//if(\isGuest()){ $arg['layout'] = 'pages-signin'; } else { $arg['layout'] = 'pages-error'; }
-							$arg['layout'] = 'pages-error';
-							//$this->layout = 'pages-signin';
-							$arg['content'] = "[pacmec-errors title=\"route_no_access_title\" content=\"route_no_access_content\"][/pacmec-errors]";
+							//$arg['layout'] = 'pages-error';
+							$this->layout = 'pages-signin';
+
+							if(isUser()) $arg['content'] = "[pacmec-errors title=\"route_no_access_title\" content=\"route_no_access_content\"][/pacmec-errors]";
+							else $arg['content'] = ('[pacmec-form-signin redirect="'.infosite('siteurl').$PACMEC['path'].'"][/pacmec-form-signin]');
 						}
 						break;
 				}

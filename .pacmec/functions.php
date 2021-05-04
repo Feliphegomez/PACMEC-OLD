@@ -550,7 +550,7 @@ function solvemedia_widget_do_html($content, $id, $theme='blank')
   switch ($theme) {
     case 'custom-pacmec':
       $add = "
-        <div class=\"row justify-content-md-center\">
+        <div class=\"pacmec-row row justify-content-md-center\">
           <div class=\"col col-lg-1\"></div>
           <div class=\"col-md-auto\">
             <div class=\"row justify-content-md-center\">
@@ -606,7 +606,71 @@ function solvemedia_widget_do_html($content, $id, $theme='blank')
           <div class=\"col col-lg-1\"></div>
         </div>
           ";
-      $R .= \PHPStrap\Util\Html::tag('div', \PHPStrap\Util\Html::tag('div', $add, ['row'], []), [], ["id"=>"adcopy-outer-{$id}"]);
+      #
+      $_retur = "
+      <div class=\"pacmec-col s1 pacmec-center\">&nbsp;</div>
+      <div class=\"pacmec-col s10 pacmec-center\">
+        <div class=\"pacmec-row row justify-content-md-center\">
+          <div class=\"pacmec-col s10 pacmec-container pacmec-center col-md-auto\">
+            <div class=\"pacmec-container pacmec-center pacmec-cp-img-box\" id=\"adcopy-puzzle-image-{$id}\"></div>
+            <div id=\"adcopy-puzzle-audio-{$id}\"></div>
+          </div>
+          <div class=\"pacmec-col s2 pacmec-center col col-lg-1\">
+            <div class=\"btn-toolbar\" role=\"toolbar\" aria-label=\"Toolbar with button groups\" id=\"adcopy-link-buttons-{$id}\">
+              <div class=\"btn-group-vertical mr-2\" role=\"group\" aria-label=\"First group\" id=\"adcopy-link-buttons-container-{$id}\">
+              <a href=\"javascript:ACPuzzle.moreinfo('{$id}')\"     class=\"pacmec-btn pacmec-button pacmec-round-xlarge pacmec-blue btn btn-sm btn-outline-secondary\" type=\"button\"><i class=\"fa fa-question\"></i></a>
+              <a href=\"javascript:ACPuzzle.change2audio('{$id}')\" class=\"pacmec-btn pacmec-button pacmec-round-xlarge pacmec-blue btn btn-sm btn-outline-secondary\" id=\"adcopy-link-audio-{$id}\"   type=\"button\"><i class=\"fa fa-volume-up\"></i></a>
+              <a href=\"javascript:ACPuzzle.change2image('{$id}')\" class=\"pacmec-btn pacmec-button pacmec-round-xlarge pacmec-blue btn btn-sm btn-outline-secondary\" id=\"adcopy-link-image-{$id}\"  type=\"button\"><i class=\"fa fa-text-width\"></i></a>
+              <a href=\"javascript:ACPuzzle.reload('{$id}')\"       class=\"pacmec-btn pacmec-button pacmec-round-xlarge pacmec-blue btn btn-sm btn-outline-secondary\" id=\"adcopy-link-refresh-{$id}\" type=\"button\"><i class=\"fa fa-repeat\"></i></a>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class=\"pacmec-row row\" id=\"adcopy-instr-row-{$id}\">
+          <div class=\"pacmec-col s12 col col-lg-12\" id=\"adcopy-instr-row-{$id}\">
+          <label for=\"adcopy_response-{$id}\" id=\"adcopy-instr-{$id}\"></label>
+            <span id=\"adcopy-error-msg-{$id}\" style=\"display: none;\"></span>
+            <div id=\"adcopy-pixel-image-{$id}\" style=\"display: none;\"></div>
+            <div id=\"adcopy-pixel-audio-{$id}\" style=\"display: none;\"></div>
+            <div id=\"adcopy-logo-cell-{$id}\" align=\"center\">
+              <span id=\"adcopy-logo-{$id}\">
+                <a id=\"adcopy-link-logo-{$id}\" title=\"\"></a>
+              </span>
+            </div>
+          </div>
+          <div class=\"pacmec-col s10 col col-lg-11\">
+            <div class=\"pacmec-container input-group input-group-sm mb-3\" id=\"adcopy-response-cell-{$id}\" style=\"width:100%\">
+              <input class=\"pacmec-input pacmec-border pacmec-border-0 pacmec-round-large\" id=\"adcopy_response-{$id}\" autocomplete=\"off\" name=\"adcopy_response\" size=\"20\" type=\"text\" required=\"\" style=\"width:100%;\" />
+            </div>
+          </div>
+          <div class=\"pacmec-col s2 col col-lg-1\">
+            <a href=\"javascript:ACPuzzle.moreinfo('{$id}')\"     id=\"adcopy-link-info-{$id}\" class=\"pacmec-btn pacmec-button pacmec-round-xlarge pacmec-gray btn btn-sm btn-outline-secondary\"><i class=\"fa fa-question\"></i></a>
+          </div>
+        </div>
+        <div class=\"pacmec-row row\">
+          <div class=\"pacmec-col s12 col col-lg-12\">
+          <div id=\"adcopy_challenge_container-{$id}\">
+            <input class=\"form-control\" id=\"adcopy_challenge-{$id}\" name=\"adcopy_challenge-{$id}\" type=\"hidden\" value=\"\" required=\"\" />
+          </div>
+          </div>
+        </div>
+      </div>
+      <div class=\"pacmec-col s1 pacmec-center\">&nbsp;</div>
+      <style>
+      .pacmec-cp-img-box img  {
+        text-align: center;
+        height: 150px;
+        width: 300px;
+      }
+      .pacmec-cp-img-box {
+        height: 150px !important;
+        width: 100% !important;
+        text-align: center !important;
+      }
+      </style>
+      ";
+
+      $R .= \PHPStrap\Util\Html::tag('div', \PHPStrap\Util\Html::tag('div', $_retur, ['pacmec-container container'], []), [], ["id"=>"adcopy-outer-{$id}"]);
       break;
     case 'custom':
       break;

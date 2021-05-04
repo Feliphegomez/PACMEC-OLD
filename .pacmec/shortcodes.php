@@ -90,6 +90,15 @@ add_shortcode('pacmec-captcha-widget-forms', 'pacmec_captcha_widget_forms');
 
 function pacmec_form_signin($atts=[], $content='')
 {
+  /*
+  <div class="pacmec-row">
+    <div class="w3-col m4 l3">
+      <p>12 columns on a small screen, 4 on a medium screen, and 3 on a large screen.</p>
+    </div>
+    <div class="w3-col m8 l9">
+      <p>12 columns on a small screen, 8 on a medium screen, and 9 on a large screen.</p>
+    </div>
+  </div>*/
   global $PACMEC;
   $args = \shortcode_atts([
     'redirect' => false
@@ -99,14 +108,12 @@ function pacmec_form_signin($atts=[], $content='')
   $form_slug = "signin-pacmec";
   $result_captcha = \pacmec_captcha_check($form_slug);
   $form = new \PHPStrap\Form\Form(
-    // infosite('siteurl')."/{$GLOBALS['PACMEC']['permanents_links']['%pacmec_signin%']}"
     ''
-    // '#pacmec_form_me_info'
     , 'POST'
     , PHPStrap\Form\FormType::Horizontal
     , 'Error:'
     , "OK"
-    , ['class'=>'row']);
+    , ['class'=>'pacmec-row']);
   $form->setWidths(12,12);
 
   $form->setGlobalValidations([
@@ -176,7 +183,7 @@ function pacmec_form_signin($atts=[], $content='')
     ])
     , __a('username')
     , ''
-    , ['col-lg-12']
+    , ['pacmec-col m12 l12']
   );
 
   $form->addFieldWithLabel(
@@ -186,21 +193,21 @@ function pacmec_form_signin($atts=[], $content='')
     ])
     , __a('hash')
     , ''
-    , ['col-lg-12']
+    , ['pacmec-col m12 l12']
   );
 
   $form->Code .= \PHPStrap\Util\Html::tag('div', "<br/>".\pacmec_captcha_widget_html("pacmec-captcha-".randString(11)."-login", $form_slug, 'custom-pacmec'), ['single-input-item mb-3']);
 
   $form->addSubmitButton(__a('signin'), [
     'name'=>"submit-{$form_slug}",
-    "class" => 'btn btn btn-dark btn-hover-primary rounded-0 w-100'
+    "class" => 'pacmec-button pacmec-green pacmec-round-large w-100'
   ]);
 
   $form->Code .= '
     <div class="login-reg-form-meta d-flex align-items-center justify-content-between">
       <a href="'.infosite('siteurl')."/{$GLOBALS['PACMEC']['permanents_links']['%forgotten_password_slug%']}".'" class="forget-pwd mb-3">'.__a('meaccount_forgotten_password').'</a>
     </div>';
-  return isGuest() ? $form : '';
+  return isGuest() ? \PHPStrap\Util\Html::tag('div', $form, ['pacmec-animate-zoom']) : '';
 }
 add_shortcode('pacmec-form-signin', 'pacmec_form_signin');
 
@@ -951,6 +958,13 @@ function pacmec_me_orders_table($atts=[], $content='')
   return \PACMEC\System\Orders::table_list_html(\PACMEC\System\Orders::get_all_by_user_id());
 }
 add_shortcode('pacmec-me-orders-table', 'pacmec_me_orders_table');
+
+function pacmec_me_notifications_table($atts=[], $content='')
+{
+  global $PACMEC;
+  return \PACMEC\System\Notifications::table_list_html($PACMEC['session']->notifications);
+}
+add_shortcode('pacmec-me-notifications-table', 'pacmec_me_notifications_table');
 
 function pacmec_me_payments_table($atts=[], $content='')
 {
@@ -1988,3 +2002,14 @@ function pacmec_contact_form($atts, $content="")
 	</form>*/
 }
 add_shortcode('pacmec-contact-form', 'pacmec_contact_form');
+
+function pacmec_errors($atts, $content="")
+{
+  global $PACMEC;
+  $args = \shortcode_atts([
+    "title" => 'title',
+    "content" => 'content',
+  ], $atts);
+  return \PHPStrap\Alert::leadParagraph($args['title'], $args['content'], 'danger');
+}
+add_shortcode('pacmec-errors', 'pacmec_errors');
