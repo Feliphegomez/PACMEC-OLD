@@ -950,6 +950,10 @@ function cargarControlador($controller){
   $controlador = ucwords($controller).'Controller';
   $strFileController = PACMEC_PATH . '/controllers/'.$controlador.'.php';
   if(!is_file($strFileController)){ $strFileController = PACMEC_PATH . '/controllers/PacmecController.php'; }
+  if(!is_file($strFileController)){
+    #throw new \Exception("Controlador no encontrado", 1);
+    exit("Controlador no encontrado");
+  }
   require_once $strFileController;
   $controllerObj = new $controlador();
   return $controllerObj;
