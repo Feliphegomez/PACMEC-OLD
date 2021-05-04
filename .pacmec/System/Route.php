@@ -19,6 +19,7 @@ class Route extends \PACMEC\System\ModeloBase
 	public $permission_access = null;
 	public $title = 'no_found';
 	public $theme = null;
+	public $comments_enabled = false;
 	public $description = 'No Found';
 	public $content = '';
 	public $request_uri = '/404';
@@ -239,6 +240,8 @@ class Route extends \PACMEC\System\ModeloBase
 			$this->content = "[pacmec-errors title=\"error_404_title\" content=\"error_404_content\"][/pacmec-errors]";
 		} else {
 			$this->keywords .= ','.infosite('sitekeywords');
+
+			$this->title = __a($this->title);
 		}
 		if(empty($this->keywords)) $this->keywords = infosite('sitekeywords');
 		$this->load_ratings();

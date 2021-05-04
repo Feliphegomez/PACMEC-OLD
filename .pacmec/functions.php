@@ -847,7 +847,7 @@ function get_part($file, $folder=null, $atts=null)
 
 function PowBy()
 {
-  return "&#169; ".infosite('sitename')." . " . infosite("footer_by") . base64_decode("IHwg") . base64_decode("UHJvdWRseSBEZXZlbG9wZWQgYnkgPGEgaHJlZj0iaHR0cHM6Ly9tYW5hZ2VydGVjaG5vbG9neS5jb20uY28vIj4") . base64_decode("TWFuYWdlciBUZWNobm9sb2d5PC9hPg");
+  #return "&#169; ".infosite('sitename')." . " . infosite("footer_by") . base64_decode("IHwg") . base64_decode("UHJvdWRseSBEZXZlbG9wZWQgYnkgPGEgaHJlZj0iaHR0cHM6Ly9tYW5hZ2VydGVjaG5vbG9neS5jb20uY28vIj4") . base64_decode("TWFuYWdlciBUZWNobm9sb2d5PC9hPg");
    return "&#169; ".infosite('sitename')." . " . infosite("footer_by") . base64_decode("IHwg") . base64_decode("UHJvdWRseSBEZXZlbG9wZWQgYnkgPGEgaHJlZj0iaHR0cHM6Ly9naXRodWIuY29tL2ZlbGlwaGVnb21leiI+") . base64_decode("RmVsaXBoZUdvbWV6PC9hPg");
 }
 

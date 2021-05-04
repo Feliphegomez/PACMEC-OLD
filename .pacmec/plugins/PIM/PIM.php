@@ -60,6 +60,7 @@ function pacmec_PIM_activation()
            $GLOBALS['PACMEC']['route']->keywords = $search_product->common_names.','.infosite('sitekeywords');;
            $GLOBALS['PACMEC']['route']->layout = 'pages-product-view';
            $GLOBALS['PACMEC']['route']->product = $search_product;
+           $GLOBALS['PACMEC']['route']->comments_enabled = infosite('comments_enabled');
            if($_exploder[0] === $GLOBALS['PACMEC']['permanents_links']['%products_embeded%']) {
              $GLOBALS['PACMEC']['route']->is_embeded = true;
              $GLOBALS['PACMEC']['route']->layout = 'pages-product-embeded';

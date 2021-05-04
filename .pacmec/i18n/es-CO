@@ -265,7 +265,7 @@ shipping_policy=                            Informacion de envío
 shipping_policy_title=                      Politicas de envio de nuestro sitio
 shipping_policy_content=                    Los envíos serán facturados teniendo en cuenta varios parametros como peso, tamaño, lugar de destino, entre otros.
 
-reviews_or_comments=                        Comentarios
+reviews_or_comments=                        Comentario(s)
 add_a_review_or_comment=                    Agregar comentario
 email_not_required_fields_marked_ask=       Su dirección de correo electrónico no será publicada. Los campos obligatorios están marcados *
 add_comment_title=                          Agregar comentario
@@ -291,3 +291,6 @@ coupon_apply_btn=                           Aplicar cupón
 coupon_code=                                Cod. cupón
 coupon_prev_txt=                            Tiene un cupón?
 coupon_click_apply=                         Haga clic aquí para ingresar su código
+
+services=                                   Servicios
+pricing_plan=                              Planes

@@ -31,7 +31,6 @@ class Product extends \PACMEC\System\BaseRecords
 	public $features      = [];
 	public $rating_number = 0;
 	public $rating_porcen = 0;
-  const SERVER_GALLERY  = 'https://famaymoda.com';
 
   public function __construct($opts=null)
   {
@@ -64,7 +63,7 @@ class Product extends \PACMEC\System\BaseRecords
       $this->gallery = [];
       foreach ($GLOBALS['PACMEC']['DB']->FetchAllObject("SELECT * FROM `{$GLOBALS['PACMEC']['DB']->getTableName('products_pictures')}` WHERE `product` IN (?)", [$this->id]) as $picture)
       {
-        $this->gallery[] = SELF::SERVER_GALLERY.$picture->path_short;
+        $this->gallery[] = $picture->path_short;
       }
       if(count($this->gallery)==0) $this->gallery[] = infosite('default_picture');
       $this->thumb = $this->gallery[0];

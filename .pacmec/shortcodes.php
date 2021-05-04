@@ -44,7 +44,6 @@ function pacmec_menu_item_to_li($item1, $classItem=[], $attsItem=[], $tree = tru
 * @param array  $atts
 * @param string  $content
 */
-
 function pacmec_social_icons($atts, $content='')
 {
   try {
@@ -1770,10 +1769,10 @@ function pacmec_comment_form($atts=[], $content='')
         case 'captcha_disabled':
           if(
             isset($PACMEC['fullData']["submit-{$form_slug}"])
-            && isset($PACMEC['fullData']['display_name'])
-            && isset($PACMEC['fullData']['email'])
-            && isset($PACMEC['fullData']['comment'])
-            && isset($PACMEC['fullData']['vote'])
+            && isset($PACMEC['fullData']['display_name']) && !empty($PACMEC['fullData']['display_name'])
+            && isset($PACMEC['fullData']['email']) && !empty($PACMEC['fullData']['email'])
+            && isset($PACMEC['fullData']['comment']) && !empty($PACMEC['fullData']['comment'])
+            && isset($PACMEC['fullData']['vote']) && !empty($PACMEC['fullData']['vote'])
           ){
             $comment                        = new \PACMEC\System\Comments();
             $comment->uri                   = $args['url'];
@@ -1784,6 +1783,7 @@ function pacmec_comment_form($atts=[], $content='')
             if(\isUser())                   $comment->user_id = \userID();
             $comment->create();
             if($comment->isValid()){
+              echo "<meta http-equiv=\"refresh\" content=\"0\" />";
               $form->setSucessMessage(__a('add_comment_r_success'));
               return true;
             } else {
@@ -1793,7 +1793,7 @@ function pacmec_comment_form($atts=[], $content='')
             $form->setErrorMessage(__a('add_comment_r_fail'));
             return false;
           }
-          $form->setErrorMessage(__a('add_comment_r_fail'));
+          $form->setErrorMessage(__a('form_invalid'));
           return false;
           break;
         default:
@@ -1866,7 +1866,7 @@ function pacmec_comment_form($atts=[], $content='')
 
   $form->addFieldWithLabel(
     new \PHPStrap\Form\Textarea('', [
-      'class'=>'comment-notes',
+      'class'=>'form-control comment-notes',
       "name" => "comment"
     ], [
       new \PHPStrap\Form\Validation\RequiredValidation(__a('required_field'))
@@ -1876,7 +1876,7 @@ function pacmec_comment_form($atts=[], $content='')
     , ''
     , ['col-lg-12 col-sm-12 comment-form-comment']
   );
-  // $form->Code .= \PHPStrap\Util\Html::tag('div', "<br/>".\pacmec_captcha_widget_html("pacmec-captcha-".randString(11), $form_slug, 'custom-pacmec'), ['col-sm-12']);
+  $form->Code .= \PHPStrap\Util\Html::tag('div', "<br/>".\pacmec_captcha_widget_html("pacmec-captcha-".randString(11), $form_slug, 'custom-pacmec'), ['col-sm-12']);
   $form->Code .= "<div class=\"clearfix\"><br></div>";
   $form->addSubmitButton(__a('add_comment_btn'), [
     'name'=>"submit-{$form_slug}",
