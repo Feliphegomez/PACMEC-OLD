@@ -5,8 +5,12 @@
 !.pacmec/themes/pacmec-default
 .pacmec/plugins/*
 !.pacmec/plugins/pacmec-hello.php
-!.pacmec/plugins/CRM
 !.pacmec/plugins/PIM
+!.pacmec/plugins/AMS
+!.pacmec/plugins/CRM
+!.pacmec/plugins/MAP
+!.pacmec/plugins/ERP
+!.pacmec/plugins/CMS
 !.pacmec/plugins/WompiCO
 public/*
 !public/default
