@@ -204,7 +204,7 @@ class Session
  		}
     $this->permissions = array_keys($this->permissions_items);
     foreach (\PACMEC\System\Notifications::get_all_by_user_id(\userID(), false) as $item) {
-      $this->notifications[] = $this->add_alert($item->data->message, $item->data->title, $item->host, strtotime($item->created), $item->id);
+      $this->notifications[] = $this->add_alert($item->message, $item->title, $item->host, strtotime($item->created), $item->id);
     }
     foreach ($this as $k => $v) {
       $_SESSION[$k] = is_object($v) ? (Array) $v : $v;

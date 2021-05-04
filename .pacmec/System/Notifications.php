@@ -12,8 +12,8 @@ namespace PACMEC\System;
 
 class Notifications extends \PACMEC\System\BaseRecords
 {
-  const TABLE_NAME            = 'notifications';
-  const COLUMNS_AUTO_T        = [];
+  const TABLE_NAME                = 'notifications';
+  const COLUMNS_AUTO_T            = [];
 
   public function __construct($opts=null)
   {
@@ -31,7 +31,8 @@ class Notifications extends \PACMEC\System\BaseRecords
     global $PACMEC;
     Parent::set_all($obj);
     if($this->isValid()){
-      $this->data = json_decode($this->data);
+      if(!empty($this->data)) $this->data = json_decode($this->data);
+      if(empty($this->link_view))  $this->link_view = "#";
     }
   }
 
@@ -41,9 +42,9 @@ class Notifications extends \PACMEC\System\BaseRecords
       global $PACMEC;
       if($user_id == null) $user_id = \userID();
       $include_read = (isset($includes[0]) && $includes[0] == true) ? "" : " AND `is_read` IN ('0') ";
-      $include_read = (isset($includes[1]) && is_numeric($includes[1])) ? " LIMIT {$includes[1]}" : " LIMIT 500 ";
+      $include_limit = (isset($includes[1]) && is_numeric($includes[1])) ? " LIMIT {$includes[1]}" : " LIMIT 500 ";
       $r = [];
-      $sql = "Select * from `{$GLOBALS['PACMEC']['DB']->getTableName(SELF::TABLE_NAME)}` WHERE `user_id`=? AND `host` IN ('*', ?) $include_read ORDER BY `host` desc";
+      $sql = "Select * from `{$GLOBALS['PACMEC']['DB']->getTableName(SELF::TABLE_NAME)}` WHERE `user_id`=? AND `host` IN ('*', ?) $include_read ORDER BY `host` desc {$include_limit} ";
 			$result = Self::link()->FetchAllObject($sql, [$user_id, $PACMEC['host']]);
       if($result !== false){
         foreach ($result as $item) {
@@ -58,27 +59,40 @@ class Notifications extends \PACMEC\System\BaseRecords
     }
   }
 
-  public static function table_list_html(array $items) : String
+  public static function table_list_html($items) : String
   {
+    global $PACMEC;
     $table = \PHPStrap\Table::borderedTable();
     $table->setStylesHeader(["thead-light"]);
     $table->addHeaderRow([
-      ''
-      , 'ID'
-      , __a('status')
-      // , 'ref'
-      // , 'items'
-      // , 'subtotal'
-      // , 'descuentos'
-      , __a('outstanding_balance')
-      , __a('created')
-      , __a('payment_date')
+      __a('notification'), __a('created'), ''
     ]);
-    foreach ($items as $order) {
-      $btns = "";
-      //$btns .= \PHPStrap\Util\Html::tag('a', \PHPStrap\Util\Html::tag('i', '', ['fa fa-eye']), ['btn btn-sm btn-outline-success btn-hover-success'], [ 'href'=>$order->link_view ]);
-      /*
+    foreach ($items as $uid => $item) {
+      switch ($item->is_read) {
+        case 1:
+          $icon = \PHPStrap\Util\Html::tag('a',
+            \PHPStrap\Util\Html::tag('i', '', ['fa fa-check-circle'])
+          , ['pacmec-change-status-notification-fast'], ['href'=>'#', 'data-notification_id'=>$item->id]);
+          break;
+        case 0:
+        $icon = \PHPStrap\Util\Html::tag('a',
+          \PHPStrap\Util\Html::tag('i', '', ['fa fa-dot-circle-o'])
+        , ['pacmec-change-status-notification-fast'], ['href'=>'#', 'data-notification_id'=>$item->id]);
+          break;
+        default:
+          $icon = \PHPStrap\Util\Html::tag('a',
+            \PHPStrap\Util\Html::tag('i', '', ['fa fa-circle-o'])
+          , ['pacmec-change-status-notification-fast'], ['href'=>'#', 'data-notification_id'=>$item->id]);
+          break;
+      }
       $table->addRow([
+        \PHPStrap\Util\Html::tag('a',
+          (!empty($item->title) ? (\PHPStrap\Util\Html::tag('b', $item->title)."<br />") : "")
+          . $item->message
+        , [], ['href'=>$item->link_view, "target"=>($_SERVER['SERVER_NAME']==$PACMEC['host'] ? '_self' : "_blank")])
+        , $item->created
+        , $icon
+      /*
         $btns
         , \PHPStrap\Util\Html::tag('a',
           \PHPStrap\Util\Html::tag('b', $order)
@@ -96,8 +110,8 @@ class Notifications extends \PACMEC\System\BaseRecords
         // , \PHPStrap\Util\Html::tag('a', 'View', ['btn btn-sm btn-outline-dark btn-hover-primary'], ['href'=>$order->link_view])
         // , \time_passed(date('m-d-Y H:i:s', strtotime($order->created)))
         //, \PHPStrap\Util\Html::tag('a', \PHPStrap\Util\Html::tag('i', '', ['fa fa-comment']), ['btn btn-sm btn-outline-secondary btn-hover-dark'], ['href'=>$order->link_view])
-      ]);
       */
+      ]);
     }
     return $table;
   }
