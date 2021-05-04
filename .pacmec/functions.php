@@ -442,7 +442,7 @@ function pacmec_foot()
         $notifications = Þ(".pacmec-change-status-notification-fast").on("click", (elm)=>{
           let data = Þ(elm.currentTarget).data();
           if(data.notification_id){
-            let url = "'.infosite('siteurl').'/?controller=Pacmec&notifications_change_status_fast="+data.notification_id+"&redirect="+location.href;
+            let url = "'.infosite('siteurl').'/?controller=Pacmec&action=notifications_change_status_fast="+data.notification_id+"&redirect="+location.href;
             console.log("url", url);
           }
         });
