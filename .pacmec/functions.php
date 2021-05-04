@@ -95,6 +95,7 @@ function pacmec_translate_label($label, $lang=null) : string
         }
       }
     }
+    return "þ{{$label}}";
     return "þ{ {$label} }";
   } catch (\Exception $e) {
     return "ÞE{ {$label} }";

@@ -235,6 +235,9 @@ site_create_order_fail=                     Error creando la orden
 order_in_black=                             La orden no tiene productos
 
 
+red=                                        Rojo
+green=                                      Verde
+
 checkout_slug=                              checkout
 checkout_btn=                               Terminar orden
 checkout_title=                             Nueva orden
