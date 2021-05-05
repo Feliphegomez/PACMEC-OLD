@@ -71,17 +71,17 @@ class Notifications extends \PACMEC\System\BaseRecords
       switch ($item->is_read) {
         case 1:
           $icon = \PHPStrap\Util\Html::tag('a',
-            \PHPStrap\Util\Html::tag('i', '', ['fa fa-check-circle'])
+            \PHPStrap\Util\Html::tag('i', '', ['fa fa-check-circle'], ["id"=>'pacmec-change-status-notification-fast-icon-'.$item->id])
           , ['pacmec-change-status-notification-fast'], ['href'=>'#', 'data-notification_id'=>$item->id]);
           break;
         case 0:
         $icon = \PHPStrap\Util\Html::tag('a',
-          \PHPStrap\Util\Html::tag('i', '', ['fa fa-dot-circle-o'])
+          \PHPStrap\Util\Html::tag('i', '', ['fa fa-dot-circle-o'], ["id"=>'pacmec-change-status-notification-fast-icon-'.$item->id])
         , ['pacmec-change-status-notification-fast'], ['href'=>'#', 'data-notification_id'=>$item->id]);
           break;
         default:
           $icon = \PHPStrap\Util\Html::tag('a',
-            \PHPStrap\Util\Html::tag('i', '', ['fa fa-circle-o'])
+            \PHPStrap\Util\Html::tag('i', '', ['fa fa-circle-o'], ["id"=>'pacmec-change-status-notification-fast-icon-'.$item->id])
           , ['pacmec-change-status-notification-fast'], ['href'=>'#', 'data-notification_id'=>$item->id]);
           break;
       }
@@ -114,5 +114,32 @@ class Notifications extends \PACMEC\System\BaseRecords
       ]);
     }
     return $table;
+  }
+
+  public function get_by_id($notification_id=null, $isMe=true)
+  {
+    $_isMe = $isMe==true ? " AND `user_id`={\userID()} " : "";
+    $sql = "Select * from `{$GLOBALS['PACMEC']['DB']->getTableName(SELF::TABLE_NAME)}` WHERE `id`=? AND `host` IN ('*', ?) $_isMe ORDER BY `host` desc {$include_limit} ";
+    $result = Self::link()->FetchObject($sql, [$notification_id, $PACMEC['host']]);
+    $this->set_all($result);
+    return $this;
+  }
+
+  private function change_status($new_status=1)
+  {
+    $sql = "UPDATE `{$GLOBALS['PACMEC']['DB']->getTableName(SELF::TABLE_NAME)}` SET `is_read`=? WHERE `id`=? AND `user_id`=? AND `host` IN ('*', ?)";
+    $result = Self::link()->FetchObject($sql, [$new_status, $this->id, \userID(), $GLOBALS['PACMEC']['host']]);
+    if($result==true) $this->is_read = $new_status;
+    return $result;
+  }
+
+  public function read()
+  {
+    return $this->change_status(1);
+  }
+
+  public function unread()
+  {
+    return $this->change_status(0);
   }
 }

@@ -442,8 +442,17 @@ function pacmec_foot()
         $notifications = Þ(".pacmec-change-status-notification-fast").on("click", (elm)=>{
           let data = Þ(elm.currentTarget).data();
           if(data.notification_id){
-            let url = "'.infosite('siteurl').'/?controller=Pacmec&action=notifications_change_status_fast="+data.notification_id+"&redirect="+location.href;
-            console.log("url", url);
+            let url = "'.infosite('siteurl').'/?controller=Pacmec&action=notifications_change_status_fast&notification_id="+data.notification_id+"&redirect="+location.href;
+            // console.log("url", url);
+            fetch(url)
+            .then(response => response.json())
+            .then(r => {
+              console.log("r", r);
+              if(r.error == false){
+                console.log("r", "no es error");
+                Þ("#pacmec-change-status-notification-fast-icon-"+data.notification_id).attr("class", r.data)
+              }
+            });
           }
         });
       }
@@ -952,7 +961,7 @@ function cargarControlador($controller){
   if(!is_file($strFileController)){ $strFileController = PACMEC_PATH . '/controllers/PacmecController.php'; }
   if(!is_file($strFileController)){
     #throw new \Exception("Controlador no encontrado", 1);
-    exit("Controlador no encontrado");
+    exit("Controlador no encontrado. $controller [$strFileController]");
   }
   require_once $strFileController;
   $controllerObj = new $controlador();
@@ -960,8 +969,9 @@ function cargarControlador($controller){
 }
 
 function cargarAccion($controllerObj,$action){
+  global $PACMEC;
   $accion = $action;
-  $controllerObj->$accion();
+  $controllerObj->$accion($PACMEC['fullData']);
 }
 
 function lanzarAccion($controllerObj){

@@ -102,6 +102,9 @@ customer_service=                           Servicio al Cliente
 support_hours_title=                        Soporte 24/7
 support_hours_content=                      Soporte 24horas 7dias
 
+me_notifications=                           Mis notificaciones
+notifications=                              Notificaciones
+notification=                               Notificacion
 
 me_account_descr=                           Desde el panel de su cuenta. puede verificar y ver fácilmente sus informacion, administrar sus direcciones de envío, editar su contraseña y los detalles de su cuenta, entre otros.
 

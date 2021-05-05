@@ -962,7 +962,7 @@ add_shortcode('pacmec-me-orders-table', 'pacmec_me_orders_table');
 function pacmec_me_notifications_table($atts=[], $content='')
 {
   global $PACMEC;
-  return \PACMEC\System\Notifications::table_list_html(\PACMEC\System\Notifications::get_all_by_user_id(null, false));
+  return \PACMEC\System\Notifications::table_list_html(\PACMEC\System\Notifications::get_all_by_user_id(null, true));
 }
 add_shortcode('pacmec-me-notifications-table', 'pacmec_me_notifications_table');
 
