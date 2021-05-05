@@ -48,6 +48,7 @@ email_invalid=                              Correo invalido
 company_name=                               Empresa
 form_invalid=                               Revisa los datos e intenta nuevamente
 read_more=                                  Leer mas
+see_all_notifications=                      Todas las notificaciones
 
 captcha_r_error=                            Ocurrio un error con el puzzle, intenta nuevamente.
 captcha_r_success=                          Puzzle comprobado con éxito.
