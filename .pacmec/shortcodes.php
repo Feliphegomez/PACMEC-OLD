@@ -924,11 +924,11 @@ add_shortcode('pacmec-form-me-change-access', 'pacmec_form_me_change_access');
 function pacmec_me_welcome_small($atts=[], $content='')
 {
   global $PACMEC;
-  $ME = ($PACMEC['route']->user);
+  $ME = ($PACMEC['session']);
   return
   \PHPStrap\Util\Html::tag('div',
     \PHPStrap\Util\Html::tag('div',
-      \PHPStrap\Util\Html::tag('p', __a('hello').', '. \PHPStrap\Util\Html::tag('strong', $ME->user->username, [], []), [], [])
+      \PHPStrap\Util\Html::tag('h1', __a('hello').', '. \PHPStrap\Util\Html::tag('strong', $ME->user->username, [], []), [], [])
     , ['welcome'], [])
     . \PHPStrap\Util\Html::tag('p', __a('me_account_descr'), ['mb-0'], [])
   , [], []);
