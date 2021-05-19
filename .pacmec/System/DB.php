@@ -12,6 +12,7 @@ namespace PACMEC\System;
 Class DB {
   private $driver, $adapter, $host, $port, $user, $pass, $database, $charset, $prefix;
   private $tables = [];
+  private $models = [];
   private $views = [];
 
   public function __construct() {
@@ -33,6 +34,28 @@ Class DB {
     return $this->tables;
   }
 
+  public function get_table_info($table)
+  {
+    if(isset($this->tables[$table])) return $this->tables[$table];
+    return null;
+  }
+
+  public function get_model_table($table)
+  {
+    if(isset($this->tables[$table]) && isset($this->tables[$table]->model)) return $this->tables[$table]->model;
+    return null;
+  }
+
+  public function get_rule_table($table)
+  {
+    if(isset($this->tables[$table]) && isset($this->tables[$table]->rules)) return $this->tables[$table]->rules;
+  }
+
+  public function get_labels_table($table)
+  {
+    if(isset($this->tables[$table]) && isset($this->tables[$table]->labels)) return $this->tables[$table]->labels;
+  }
+
   public function load_models() : void
   {
     $sql = "SELECT * from `INFORMATION_SCHEMA`.`TABLES` where (`information_schema`.`TABLES`.`TABLE_SCHEMA` = database())";
@@ -44,7 +67,7 @@ Class DB {
         switch ($a->TABLE_TYPE) {
           case 'VIEW':
           case 'BASE TABLE':
-            Self::add_models($a);
+            $this->add_models($a);
             break;
           default:
             break;
@@ -54,16 +77,20 @@ Class DB {
     }
   }
 
-  public function add_models(Object $model) : void
+  private function add_models(Object $model) : void
   {
     $name = @str_replace(DB_prefix, '', $model->TABLE_NAME);
+    $tmp = $this->load_columns($model->TABLE_NAME);
     $item = (Object) [
       "name" => $model->TABLE_NAME,
       "collation" => $model->TABLE_COLLATION,
       "auto_increment" => $model->AUTO_INCREMENT,
       "rows" => $model->TABLE_ROWS,
-      "model" => Self::load_columns($model->TABLE_NAME)
-      //"data" => $model
+      "columns" => $tmp->columns,
+      "model" => $tmp->model,
+      "rules" => $tmp->rules,
+      "labels" => $tmp->labels,
+      //"data" => $tmp
     ];
     switch ($model->TABLE_TYPE) {
       case 'BASE TABLE':
@@ -81,7 +108,7 @@ Class DB {
    * @param string $columna
    * @return object ModeloBase
    */
-  public function def_column($columna){
+  private function def_column($columna){
     $column = new \stdClass();
     if(!\is_object($columna)){ return $column; }
     $column->name = isset($columna->columna_nombre) ? $columna->columna_nombre : 'no_detect';
@@ -106,11 +133,13 @@ Class DB {
     return $column;
   }
 
-	public function load_columns(String $tbl)
+	private function load_columns(String $tbl)
   {
     try {
+      $_table = @explode(DB_prefix, $tbl);
+      $table = $_table[1];
       $db = DB_database;
-      $model   = (Object) [];
+      $model   = (Object) ["model"=>(object)[]];
       $columns = [];
 			$sql = "SELECT
           `tbl_columns`.`ORDINAL_POSITION` AS `posicion_original`,
@@ -127,19 +156,16 @@ Class DB {
           `tbl_rship`.`REFERENCED_COLUMN_NAME` AS `columna_referencia`
       FROM `information_schema`.`columns` AS `tbl_columns`
       LEFT JOIN `information_schema`.`KEY_COLUMN_USAGE` AS `tbl_rship`
-      ON
-          `tbl_rship`.`CONSTRAINT_SCHEMA` IN (?) AND `tbl_columns`.`COLUMN_NAME` = `tbl_rship`.`COLUMN_NAME` AND `tbl_columns`.`table_name` = `tbl_rship`.`table_name` AND `tbl_rship`.`REFERENCED_TABLE_SCHEMA` IS NOT NULL
+      ON `tbl_rship`.`CONSTRAINT_SCHEMA` IN (?) AND `tbl_columns`.`COLUMN_NAME` = `tbl_rship`.`COLUMN_NAME` AND `tbl_columns`.`table_name` = `tbl_rship`.`table_name` AND `tbl_rship`.`REFERENCED_TABLE_SCHEMA` IS NOT NULL
 			WHERE `tbl_columns`.`table_schema` IN (?) AND `tbl_columns`.`table_name` IN (?) ORDER BY `tbl_columns`.`ORDINAL_POSITION` ASC";
       $sending = [$db, $db, $tbl];
-
-      # echo json_encode($sending);
-      $result = Self::FetchAllObject($sql, $sending);
-
+      $result = $this->FetchAllObject($sql, $sending);
 			if($result !== null && count($result) > 0){
 				foreach ($result as $column) {
-					$column = Self::def_column($column);
+					$column = $this->def_column($column);
 					$columns[] = $column;
-					$model->{$column->name} = $column->value;
+					$model->model->{$column->name} = $column->value;
+
 					$inArray = \array_search('UNI', $column->key);
 					if(isset($model->isUnique) && $model->isUnique == null && $inArray !== false){ $model->isUnique = true; }
 					// Create RULE
@@ -147,10 +173,13 @@ Class DB {
 					$rule["name"] = $column->name;
 					$rule["required"] = $column->required;
 					$rule["unique"] = $column->unique;
+					$rule["nullValid"] = $column->nullValid;
+					$rule["auto_increment"] = $column->auto_increment;
 					if($column->length_max !== false && $column->length_max > 0){ $rule["length_max"] = $column->length_max; }
-					//$model->rules[$column->name] = $rule;
 					// CREATE LABELS
-					//$model->labels[$column->name] = $column->value;
+          $model->columns[] = $column->name;
+					$model->rules[$column->name] = $rule;
+					$model->labels[$column->name] = ("l_{$table}_{$column->name}");
 				}
         return $model;
 			} else {
@@ -165,15 +194,6 @@ Class DB {
 
   public function get_value_default_sql($type="varchar", $default=null)
   {
-    /*
-      "boolean" o "bool"
-      "integer" o "int"
-      "float" o "double"
-      "string"
-      "array"
-      "object"
-      "null"
-    */
     switch ($type) {
         case 'varchar':
             return strip_tags($default);
@@ -211,6 +231,12 @@ Class DB {
   public function getTableName(String $tbl_gbl)
   {
     if(isset($this->tables[$tbl_gbl])) return $this->tables[$tbl_gbl]->name;
+    return false;
+  }
+
+  public function getViewName(String $tbl_gbl)
+  {
+    if(isset($this->views[$tbl_gbl])) return $this->views[$tbl_gbl]->name;
     return false;
   }
 

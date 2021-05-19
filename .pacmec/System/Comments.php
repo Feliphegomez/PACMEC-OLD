@@ -30,6 +30,8 @@ class Comments extends \PACMEC\System\BaseRecords
 
   public function create()
   {
+    //if(empty($this->host)) $this->host = $GLOBALS['PACMEC']['host'];
+    if(empty($this->host)) $this->host = '*';
   	$columns = $this->getColumns();
   	$columns_a = [];
   	$columns_f = [];
@@ -48,6 +50,7 @@ class Comments extends \PACMEC\System\BaseRecords
             , 'email'
             , 'comment'
             , 'vote'
+            , 'host'
           ])
         ){
     			$columns_f[] = $i;
@@ -79,8 +82,8 @@ class Comments extends \PACMEC\System\BaseRecords
   {
     try {
       $r = [];
-      $sql = "Select * from `".Self::get_table()."` WHERE `{$k}`=?";
-			$result = Self::link()->FetchAllObject($sql, [$v]);
+      $sql = "Select * from `".Self::get_table()."` WHERE `{$k}`=? AND `host` IN ('*', ?)";
+			$result = Self::link()->FetchAllObject($sql, [$v, $GLOBALS['PACMEC']['host']]);
       if($result !== false){ foreach ($result as $item) { $r[] = new Self((object) ['comment_id'=>$item->id]); } }
       return $r;
     } catch (\Exception $e) {

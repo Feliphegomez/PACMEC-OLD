@@ -2,7 +2,7 @@
 /**
  * Plugin Name: CRM PACMEC
  * Text Domain: CRM
- * Description: 
+ * Description:
  *
  * Plugin URI: https://github.com/PACMEC/PACMEC-CRM
  * Version: 0.1

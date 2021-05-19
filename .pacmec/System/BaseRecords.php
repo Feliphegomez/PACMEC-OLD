@@ -42,9 +42,14 @@ class BaseRecords
     return "id ".get_called_class()::TABLE_NAME.": {$this->id}";
   }
 
-  public function get_columns()
+  public function get_rules()
   {
-    return $this->columns;
+    return $this->rules;
+  }
+
+  public function get_columns($include_id=false)
+  {
+    return $this->getColumns($include_id);
   }
 
   public static function link()
@@ -70,108 +75,37 @@ class BaseRecords
 
 	public function getColumns($include_id=false)
   {
-		 $items = [];
-		 foreach($this->columns as $item){
-			 if($item->name == 'id' && $include_id == false){
-
+		 $r = [];
+		 foreach($this->columns as $a){
+			 if($a == 'id' && $include_id == false){
 			 }else{
-				 $items[] = $item->name;
+				 $r[] = $a;
 			 }
 		 }
-		 return $items;
+     return $r;
 	}
 
-  public static function get_value_default_sql($type="varchar", $default=null)
-  {
-    switch ($type) {
-      case 'varchar':
-        return strip_tags($default);
-        break;
-      case 'text':
-        return is_string($default) ? strip_tags($default) : $default;
-        break;
-      case 'int':
-        return (int) $default;
-        break;
-      case 'datetime':
-        return (string) $default;
-        break;
-      default:
-        return is_string($default) ? strip_tags($default) : $default;
-        break;
-    }
-  }
-
-  /**
-   * @param string $columna
-   * @return object ModeloBase
-   */
-  private function modelInitial($columna)
-  {
-    $column = new \stdClass();
-    if(!is_object($columna)){ return $column; }
-    $column->name = isset($columna->columna_nombre) ? $columna->columna_nombre : 'no_detect';
-    $column->nullValid = (isset($columna->nullValido) && $columna->nullValido == 'YES') ? true : false;
-    $column->value_default = $columna->columna_value_default;
-    $column->type = $columna->data_tipo;
-    $column->key = array_filter(explode(',', $columna->columna_key));
-    $column->extra = array_filter(explode(',', $columna->columna_extra));
-    $column->tbl_ref = $columna->tabla_referencia;
-    $column->tbl_column = $columna->columna_referencia;
-    $column->auto_increment = (array_search('auto_increment', $column->extra) !== false) ? true : false;
-    $column->unique = (array_search('UNI', $column->key) !== false) ? true : false;
-    $column->primary = (array_search('PRI', $column->key) !== false) ? true : false;
-    $column->mult = (array_search('MUL', $column->key) !== false) ? true : false;
-    $column->length_max = isset($columna->length_max) ? (int) $columna->length_max : false;
-    $column->value_default = isset($column->value_default) ? $column->value_default : null;
-    $column->nullValid = isset($column->nullValid) ? $column->nullValid : true;
-    $column->required = ($column->auto_increment == true) ? false : true;
-    $column->required = ($column->nullValid == true) ? false : true;
-    $column->value = ($column->nullValid == true) ? $column->value_default : Self::get_value_default_sql($column->type, $column->value_default);
-    $column->value = (strip_tags($column->value) == strip_tags("CURRENT_TIMESTAMP")) ? date("Y-m-d H:i:s") : $column->value;
-    return $column;
-  }
 
 	private function loadColumns()
   {
     try {
-			$db = DB_database;
-			$sql = "SELECT
-        `tbl_columns`.`ORDINAL_POSITION` AS `posicion_original`,
-        `tbl_columns`.`COLUMN_NAME` AS `columna_nombre`,
-        `tbl_columns`.`IS_NULLABLE` AS `nullValido`,
-        `tbl_columns`.`COLUMN_DEFAULT` AS `columna_value_default`,
-        `tbl_columns`.`DATA_TYPE` AS `data_tipo`,
-        `tbl_columns`.`COLUMN_TYPE` AS `columna_tipo`,
-        `tbl_columns`.`CHARACTER_MAXIMUM_LENGTH` AS `length_max`,
-        `tbl_columns`.`COLUMN_KEY` AS `columna_key`,
-        `tbl_columns`.`EXTRA` AS `columna_extra`,
-        `tbl_columns`.`COLUMN_COMMENT` AS `columna_comnetario`,
-        `tbl_rship`.`REFERENCED_TABLE_NAME` AS `tabla_referencia`,
-        `tbl_rship`.`REFERENCED_COLUMN_NAME` AS `columna_referencia`
-      FROM `information_schema`.`columns` AS `tbl_columns`
-      LEFT JOIN `information_schema`.`KEY_COLUMN_USAGE` AS `tbl_rship`
-      ON `tbl_rship`.`CONSTRAINT_SCHEMA` IN (?) AND `tbl_columns`.`COLUMN_NAME` = `tbl_rship`.`COLUMN_NAME` AND `tbl_columns`.`table_name` = `tbl_rship`.`table_name` AND `tbl_rship`.`REFERENCED_TABLE_SCHEMA` IS NOT NULL
-			WHERE `tbl_columns`.`table_schema` IN (?) AND `tbl_columns`.`table_name` IN (?) ORDER BY `tbl_columns`.`ORDINAL_POSITION` ASC";
-			$result = Self::link()->FetchAllObject($sql, [$db, $db, Self::get_table()]);
-      if($result !== null && count($result) > 0){
-				foreach ($result as $column) {
-					$column = $this->modelInitial($column);
-					$this->columns[] = $column;
-					$this->{$column->name} = $column->value;
-					$inArray = array_search('UNI', $column->key);
-					if(isset($this->isUnique) && $this->isUnique == null && $inArray !== false){ $this->isUnique = true; }
-					$rule = [];
-					$rule["name"] = $column->name;
-					$rule["required"] = $column->required;
-					$rule["unique"] = $column->unique;
-					if($column->length_max !== false && $column->length_max > 0){ $rule["length_max"] = $column->length_max; }
-					$this->rules[$column->name] = $rule;
-					// CREATE LABELS
-					$this->labels[$column->name] = $column->value;
-				}
-			} else {
-        throw new \Exception("No se cargaron las columnas del modelo.\n");
+      global $PACMEC;
+      $result = null;
+      // get_tables_info();
+      $table = get_called_class()::TABLE_NAME;
+      $result = $PACMEC['DB']->get_table_info($table);
+      // if(isset($PACMEC['DB']->get_tables_info()[$table]) && isset($PACMEC['DB']->get_tables_info()[$table]->model)) $result = $PACMEC['DB']->get_tables_info()[$table]->model;
+
+      if($result !== null){
+        $this->columns       = $result->columns;
+        $this->rules         = $result->rules;
+        $this->labels        = $result->labels;
+
+        foreach ($result->model as $k => $v) {
+          $this->{$k} = $v;
+        }
+      } else {
+        throw new \Exception("No se cargaron las columnas del modelo. {$table}\n");
 			}
     }
     catch(\Exception $e){
@@ -187,6 +121,23 @@ class BaseRecords
       $r = [];
       $sql = "Select * from `".$class::get_table()."` ";
 			$result = $class::link()->FetchAllObject($sql, []);
+      foreach ($result as $item) { $r[] = new $class($item); }
+      return $r;
+    } catch (\Exception $e) {
+      echo $e->getMessage();
+      return [];
+    }
+  }
+
+  public static function get_all_pagination($page, $limit=25)
+  {
+    try {
+      $offset        = ($page-1)*$limit;
+      $class = get_called_class();
+      $r = [];
+      $sql = "SELECT * FROM `".$class::get_table()."` ORDER BY `created` ASC LIMIT ? OFFSET ?";
+			$result = $class::link()->FetchAllObject($sql, [$limit, $offset]);
+      if($result == false) return [];
       foreach ($result as $item) { $r[] = new $class($item); }
       return $r;
     } catch (\Exception $e) {

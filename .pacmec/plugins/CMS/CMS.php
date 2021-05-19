@@ -46,7 +46,7 @@ function pacmec_CMS_activation()
            $GLOBALS['PACMEC']['route']->title = __a('blog_read') . ' ' . $search->title;
            $GLOBALS['PACMEC']['route']->description = strip_tags($search->content);
            $GLOBALS['PACMEC']['route']->content = strip_tags($search->content);
-           $GLOBALS['PACMEC']['route']->keywords = implode(',', explode(',', $search->tags)).','.infosite('sitekeywords');;
+           $GLOBALS['PACMEC']['route']->keywords = implode(',', $search->tags).','.infosite('sitekeywords');;
            $GLOBALS['PACMEC']['route']->layout = 'pages-blog-details';
            $GLOBALS['PACMEC']['route']->post = $search;
            $GLOBALS['PACMEC']['route']->comments_enabled = infosite('comments_enabled');
@@ -60,14 +60,22 @@ function pacmec_CMS_activation()
         }
       }
     }
-     // 1 Atributo para explorador de la tienda
-     else if(isset($_exploder[0]) && count($_exploder)==1 && $_exploder[0] === $GLOBALS['PACMEC']['permanents_links']['%blog_slug%']) {
-       $GLOBALS['PACMEC']['route']->id = 1;
-       $GLOBALS['PACMEC']['route']->title = __a('blog');
-       $GLOBALS['PACMEC']['route']->description = infosite('sitedescr');
-       $GLOBALS['PACMEC']['route']->layout = 'pages-blog';
-       $GLOBALS['PACMEC']['route']->content = '';
-     }
+    // 1 Atributo para explorador de la tienda
+    else if(isset($_exploder[0]) && count($_exploder)==1 && $_exploder[0] === $GLOBALS['PACMEC']['permanents_links']['%blog_slug%']) {
+      $GLOBALS['PACMEC']['route']->id = 1;
+      $GLOBALS['PACMEC']['route']->title = __a('blog');
+      $GLOBALS['PACMEC']['route']->description = infosite('sitedescr');
+      $GLOBALS['PACMEC']['route']->layout = 'pages-blog';
+      $GLOBALS['PACMEC']['route']->content = '';
+    }
+    else if(isset($_exploder[0]) && count($_exploder)==1 && $_exploder[0] === $GLOBALS['PACMEC']['permanents_links']['%admin_blog_slug%']) {
+      $GLOBALS['PACMEC']['route']->id = 1;
+      $GLOBALS['PACMEC']['route']->permission_access = 'posts:admin';
+      $GLOBALS['PACMEC']['route']->title = __a('manage') . " " . __a('blog');
+      $GLOBALS['PACMEC']['route']->description = infosite('sitedescr');
+      $GLOBALS['PACMEC']['route']->layout = 'pages-none';
+      $GLOBALS['PACMEC']['route']->content = '[pacmec-admin-blog-table][/pacmec-admin-blog-table]';
+    }
 
      #echo json_encode($GLOBALS['PACMEC']['route']);
      #exit;

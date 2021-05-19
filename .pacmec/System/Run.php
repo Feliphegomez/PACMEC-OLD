@@ -65,6 +65,26 @@ class Run
     // add_scripts_head(siteinfo('siteurl') . "/.pacmec/assets/dist/vue/vue.min.js",    ["type"=>"text/javascript", "charset"=>"UTF-8"], 0, false);
     // add_scripts_head(siteinfo('siteurl') . "/.pacmec/assets/dist/vue/vue-router.js",    ["type"=>"text/javascript", "charset"=>"UTF-8"], 0, false);
     // add_scripts_head(siteinfo('siteurl') . "/.pacmec/assets/js/sdk.js"."?&cache=".rand(),   ["type"=>"text/javascript", "charset"=>"UTF-8"], 0, false);
+
+    add_style_head(siteinfo('siteurl')   . "/.pacmec/assets/dist/bootstrap-tagsinput/dist/bootstrap-tagsinput.css",  ["rel"=>"stylesheet", "type"=>"text/css", "charset"=>"UTF-8"], 1, false);
+    add_scripts_head(siteinfo('siteurl') . "/.pacmec/assets/dist/bootstrap-tagsinput/dist/bootstrap-tagsinput.min.js",   ["type"=>"text/javascript", "charset"=>"UTF-8"], 1, false);
+
+    #add_style_head(siteinfo('siteurl')   . "/.pacmec/assets/dist/Metro-UI-CSS/build/css/metro-all.min.css",  ["rel"=>"stylesheet", "type"=>"text/css", "charset"=>"UTF-8"], 1, false);
+    #add_scripts_head(siteinfo('siteurl') . "/.pacmec/assets/dist/Metro-UI-CSS/build/js/metro.min.js",   ["type"=>"text/javascript", "charset"=>"UTF-8"], 1, false);
+
+    //add_scripts_head(siteinfo('siteurl') . "/.pacmec/assets/dist/ckeditor/ckeditor.js",   ["type"=>"text/javascript", "charset"=>"UTF-8"], 1, false);
+
+    if (infosite('grapesjs_enable')==true) {
+      add_style_head(siteinfo('siteurl')   . "/.pacmec/assets/dist/grapesjs-0.17.3/css/grapes.min.css"."?&cache=".rand(),  ["rel"=>"stylesheet", "type"=>"text/css", "charset"=>"UTF-8"], 1, false);
+      add_style_head(siteinfo('siteurl')   . "/.pacmec/assets/dist/grapesjs-0.17.3/plugins/grapesjs-preset-webpage/dist/grapesjs-preset-webpage.min.css",  ["rel"=>"stylesheet", "type"=>"text/css", "charset"=>"UTF-8"], 1, false);
+      add_style_head(siteinfo('siteurl')   . "/.pacmec/assets/dist/grapesjs-0.17.3/plugins/grapesjs-preset-newsletter/dist/grapesjs-preset-newsletter.css",  ["rel"=>"stylesheet", "type"=>"text/css", "charset"=>"UTF-8"], 1, false);
+
+      add_scripts_head(siteinfo('siteurl') . "/.pacmec/assets/dist/grapesjs-0.17.3/grapes.min.js",   ["type"=>"text/javascript", "charset"=>"UTF-8"], 1, false);
+      add_scripts_head(siteinfo('siteurl') . "/.pacmec/assets/dist/grapesjs-0.17.3/plugins/grapesjs-preset-webpage/dist/grapesjs-preset-webpage.min.js",   ["type"=>"text/javascript", "charset"=>"UTF-8"], 1, false);
+      add_scripts_head(siteinfo('siteurl') . "/.pacmec/assets/dist/grapesjs-0.17.3/plugins/grapesjs-preset-newsletter/dist/grapesjs-preset-newsletter.min.js",   ["type"=>"text/javascript", "charset"=>"UTF-8"], 1, false);
+      //add_scripts_head(siteinfo('siteurl') . "/.pacmec/assets/dist/grapesjs-0.17.3/plugins/grapesjs-plugin-ckeditor/dist/grapesjs-plugin-ckeditor.min.js",   ["type"=>"text/javascript", "charset"=>"UTF-8"], 1, false);
+
+    }
   }
 
   public static function pacmec_run_ui()
@@ -501,7 +521,19 @@ class Run
             $PACMEC['route']->getBy('request_uri', $s_path);
           }
           \do_action('route_extends_path');
-          break;
+          if ($PACMEC['route']->permission_access !== null) {
+            $check = \validate_permission($PACMEC['route']->permission_access);
+            if($check == false){
+
+              if(isUser()) {
+                $PACMEC['route']->content = "[pacmec-errors title=\"route_no_access_title\" content=\"route_no_access_content\"][/pacmec-errors]";
+              }
+              else {
+                $PACMEC['route']->layout = 'pages-signin';
+                $PACMEC['route']->content = ('[pacmec-form-signin redirect="'.infosite('siteurl').$PACMEC['path'].'"][/pacmec-form-signin]');
+              }
+            }
+          }
       }
 
       $model_route = $PACMEC['route'];

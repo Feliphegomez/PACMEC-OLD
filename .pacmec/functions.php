@@ -575,9 +575,9 @@ function solvemedia_widget_do_html($content, $id, $theme='blank')
       $add = "
         <div class=\"pacmec-row row justify-content-md-center\">
           <div class=\"col col-lg-1\"></div>
-          <div class=\"col-md-auto\">
+          <div class=\"mauto\">
             <div class=\"row justify-content-md-center\">
-              <div class=\"col-md-auto\">
+              <div class=\"mauto\">
                 <div id=\"adcopy-puzzle-image-{$id}\" style=\"height: 150px; width: 300px; text-align: left;\">&nbsp;</div>
                 <div id=\"adcopy-puzzle-audio-{$id}\"></div>
               </div>
@@ -610,7 +610,7 @@ function solvemedia_widget_do_html($content, $id, $theme='blank')
 
               <div class=\"col col-lg-11\">
                 <div class=\"input-group input-group-sm mb-3\" id=\"adcopy-response-cell-{$id}\">
-                  <input class=\"form-control\" id=\"adcopy_response-{$id}\" autocomplete=\"off\" name=\"adcopy_response\" size=\"20\" type=\"text\" required=\"\" />
+                  <input class=\"pacmec-input pacmec-border pacmec-round-large\" id=\"adcopy_response-{$id}\" autocomplete=\"off\" name=\"adcopy_response\" size=\"20\" type=\"text\" required=\"\" />
                 </div>
               </div>
               <div class=\"col col-lg-1\">
@@ -634,7 +634,7 @@ function solvemedia_widget_do_html($content, $id, $theme='blank')
       <div class=\"pacmec-col s1 pacmec-center\">&nbsp;</div>
       <div class=\"pacmec-col s10 pacmec-center\">
         <div class=\"pacmec-row row justify-content-md-center\">
-          <div class=\"pacmec-col s10 pacmec-container pacmec-center col-md-auto\">
+          <div class=\"pacmec-col s10 pacmec-container pacmec-center mauto\">
             <div class=\"pacmec-container pacmec-center pacmec-cp-img-box\" id=\"adcopy-puzzle-image-{$id}\"></div>
             <div id=\"adcopy-puzzle-audio-{$id}\"></div>
           </div>
@@ -662,7 +662,7 @@ function solvemedia_widget_do_html($content, $id, $theme='blank')
             </div>
           </div>
           <div class=\"pacmec-col s10 col col-lg-11\">
-            <div class=\"pacmec-container input-group input-group-sm mb-3\" id=\"adcopy-response-cell-{$id}\" style=\"width:100%\">
+            <div class=\"pacmec-container3\" id=\"adcopy-response-cell-{$id}\" style=\"width:100%\">
               <input class=\"pacmec-input pacmec-border pacmec-border-0 pacmec-round-large\" id=\"adcopy_response-{$id}\" autocomplete=\"off\" name=\"adcopy_response\" size=\"20\" type=\"text\" required=\"\" style=\"width:100%;\" />
             </div>
           </div>
@@ -693,7 +693,7 @@ function solvemedia_widget_do_html($content, $id, $theme='blank')
       </style>
       ";
 
-      $R .= \PHPStrap\Util\Html::tag('div', \PHPStrap\Util\Html::tag('div', $_retur, ['pacmec-container container'], []), [], ["id"=>"adcopy-outer-{$id}"]);
+      $R .= \PHPStrap\Util\Html::tag('div', \PHPStrap\Util\Html::tag('div', $_retur, ['pacmec-container '], []), [], ["id"=>"adcopy-outer-{$id}"]);
       break;
     case 'custom':
       break;

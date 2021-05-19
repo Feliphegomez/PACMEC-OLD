@@ -26,7 +26,7 @@ class Html{
 		foreach ($attributes as $key => $val) {
 			$attributes_str .= ' ' . $key . '="' . $val . '"';
 		}
-		return '<' . $tag_name . Self::tag_class($styles) . $attributes_str . (($tag_single == false) ? '>' : '/>') . (($tag_single == false) ? $content . '</' . $tag_name . '>' : '');
+		return '<' . $tag_name . Self::tag_class($styles) . $attributes_str . (($tag_single == false) ? '>' : '/>') . (($tag_single == false) ? $content . '</' . $tag_name . '>' : '')."\n";
 	}
 
 	/**
@@ -52,7 +52,7 @@ class Html{
 		foreach ($attributes as $key => $val) {
 			$attributes_str .= ' ' . $key . '="' . $val . '"';
 		}
-		return '<div' . Self::tag_class($styles) . $attributes_str . '>' . $content . '</div>';
+		return '<div' . Self::tag_class($styles) . $attributes_str . '>' . $content . '</div>'."\n";
 	}
 
 }

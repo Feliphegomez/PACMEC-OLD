@@ -15,7 +15,7 @@ class Products extends \PACMEC\System\ModeloBase {
   const MODEL_TBL       = 'products';
   const COLUMNS_AUTO_T  = [];
 	public $in_promo      = false;
-	public $link_href     = "#";
+	public $link_view     = "#";
 	public $thumb         = "";
 	public $gallery       = [];
 	public $features      = [];
@@ -104,7 +104,5 @@ class Products extends \PACMEC\System\ModeloBase {
     }
     return $r;
   }
-
-
 
 }

@@ -106,6 +106,7 @@ class WompiCOEvents
                       }
                       if($exist == false){
                         $payment = new \PACMEC\System\Payments();
+                        $payment->order_id           = $order->id;
                         $payment->ref                = $datas->transaction->reference;
                         $payment->provider           = "WompiCO";
                         $payment->environment        = $environment;

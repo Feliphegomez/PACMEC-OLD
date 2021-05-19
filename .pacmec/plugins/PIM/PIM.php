@@ -14,6 +14,7 @@
 function pacmec_PIM_activation()
 {
  try {
+   define('GALLERIES_SHOP_PATH', dirname(PACMEC_PATH) . "/public/galleries/shop");
    require_once 'includes/shortcodes.php';
    $tbls = [
      'products',
@@ -55,7 +56,7 @@ function pacmec_PIM_activation()
            $GLOBALS['PACMEC']['route']->title = __a('products_view') . ' ' .$search_product->name . ' | ' . __a('sku_ref') . ': ' . $search_product->sku;
            $GLOBALS['PACMEC']['route']->description = $search_product->description;
            $GLOBALS['PACMEC']['route']->content = strip_tags($search_product->description);
-           $GLOBALS['PACMEC']['route']->keywords = $search_product->common_names.','.infosite('sitekeywords');;
+           $GLOBALS['PACMEC']['route']->keywords = implode(',', $search_product->common_names).','.infosite('sitekeywords');;
            $GLOBALS['PACMEC']['route']->layout = 'pages-product-view';
            $GLOBALS['PACMEC']['route']->product = $search_product;
            $GLOBALS['PACMEC']['route']->comments_enabled = infosite('comments_enabled');
@@ -117,6 +118,22 @@ function pacmec_PIM_activation()
        $GLOBALS['PACMEC']['route']->description = infosite('sitedescr') . __a('checkout_title');
        $GLOBALS['PACMEC']['route']->layout = 'pages-checkout';
        $GLOBALS['PACMEC']['route']->shopping_cart = $GLOBALS['PACMEC']['session']->shopping_cart;
+     }
+     else if(isset($_exploder[0]) && count($_exploder)==1 && $_exploder[0] === $GLOBALS['PACMEC']['permanents_links']['%admin_products_slug%']) {
+       $GLOBALS['PACMEC']['route']->id = 1;
+       $GLOBALS['PACMEC']['route']->permission_access = 'products:admin';
+       $GLOBALS['PACMEC']['route']->title = __a('manage') . " " . __a('products');
+       $GLOBALS['PACMEC']['route']->description = infosite('sitedescr');
+       $GLOBALS['PACMEC']['route']->layout = 'pages-none';
+       $GLOBALS['PACMEC']['route']->content = '[pacmec-admin-products-table][/pacmec-admin-products-table]';
+     }
+     else if(isset($_exploder[0]) && count($_exploder)==1 && $_exploder[0] === $GLOBALS['PACMEC']['permanents_links']['%admin_galleries_shop_slug%']) {
+       $GLOBALS['PACMEC']['route']->id = 1;
+       $GLOBALS['PACMEC']['route']->permission_access = 'products:admin';
+       $GLOBALS['PACMEC']['route']->title = __a('manage') . " " . __a('products');
+       $GLOBALS['PACMEC']['route']->description = infosite('sitedescr');
+       $GLOBALS['PACMEC']['route']->layout = 'pages-none';
+       $GLOBALS['PACMEC']['route']->content = '[pacmec-admin-galleries-shop-table][/pacmec-admin-galleries-shop-table]';
      }
 
      #echo json_encode($GLOBALS['PACMEC']['route']);

@@ -273,7 +273,7 @@ class Route extends \PACMEC\System\ModeloBase
 	private function load_ratings()
 	{
 		global $PACMEC;
-		$rating = \PACMEC\System\Ratign::get_all_uri(infosite('siteurl') . $PACMEC['path']);
+		$rating = \PACMEC\System\Ratign::get_all_uri($PACMEC['path']);
 		$this->rating_number = $rating->rating_number;
 		$this->rating_porcen = $rating->rating_porcen;
 		$this->comments = $rating->votes;

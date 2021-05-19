@@ -43,8 +43,8 @@ class Ratign extends \PACMEC\System\BaseRecords
         , MIN(`vote`) AS `min`
         , AVG(`vote`) AS `rating_number`
       FROM `".Self::get_table()."`
-      WHERE `uri`=?";
-			$result = Self::link()->FetchObject($sql, [$uri]);
+      WHERE `uri`=? AND `host` IN ('*', ?)";
+			$result = Self::link()->FetchObject($sql, [$uri, $GLOBALS['PACMEC']['host']]);
       if($result !== false){
         $r->set_all($result);
         if($loadvotes==true) $r->votes = \PACMEC\System\Comments::get_all_by('uri', $uri);

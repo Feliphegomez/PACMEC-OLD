@@ -24,7 +24,7 @@ class Orders extends \PACMEC\System\BaseRecords
   public $pay_enabled             = false;
   public $counting                = 0;
   public $items                   = [];
-  public $addresses                   = [];
+  public $addresses               = [];
 
   public function __construct($opts=null)
   {
