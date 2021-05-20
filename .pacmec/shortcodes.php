@@ -3181,7 +3181,7 @@ function pacmec_admin_galleries_shop_table($atts, $content="")
   $info_tables    = $PACMEC['DB']->get_tables_info();
   if($reload == true){
     #$html .= json_encode(\PACMEC\System\GalleriesShop::get_all_in_gallery(), JSON_PRETTY_PRINT);
-    echo "En progreso...";
+    echo \PACMEC\System\GalleriesShop::reload_all_galleries_shop();
   } else {
     $html .= \PACMEC\System\GalleriesShop::table_list_html_galleries_reload(\PACMEC\System\GalleriesShop::get_all_in_gallery());
   }

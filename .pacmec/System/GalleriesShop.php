@@ -19,12 +19,7 @@ class GalleriesShop extends \PACMEC\System\BaseRecords
   public function __construct($opts=null)
   {
     Parent::__construct();
-    if(
-      is_object($opts)
-      && isset($opts->id)
-    ) {
-      $this->get_by_id($opts->id);
-    }
+    if(is_object($opts) && isset($opts->id)) $this->get_by_id($opts->id);
   }
 
   public function set_all($obj)
@@ -49,7 +44,6 @@ class GalleriesShop extends \PACMEC\System\BaseRecords
       $ref_sku  = basename($file_path);
       if(!isset($r[$ref_sku])) $r[$ref_sku] = [];
       $product = new \PACMEC\System\Product((object) ["ref"=>$ref_sku]);
-
       foreach (scanDir::scan($file_path, [
         "jpg",
         "bmp",
@@ -258,7 +252,7 @@ class GalleriesShop extends \PACMEC\System\BaseRecords
           && $i!=='id'
           && in_array($i, $columns_save)
         ){
-    			$columns_f[] = $i;
+    			$columns_f[] = "`{$i}`";
     			$columns_a[] = "?";
     			$columns_b[] = " `{$i}`=? ";
     			$items_send[] = $this->{$i};
@@ -305,4 +299,64 @@ class GalleriesShop extends \PACMEC\System\BaseRecords
   		return 0;
   	}
   }
+
+  public static function reload_all_galleries_shop()
+  {
+    $html = "";
+    $html .= \PACMEC\Util\Html::tag('p', "*** *** *** Start *** *** ***", [], []);
+    foreach (\PACMEC\System\GalleriesShop::get_all_in_gallery() as $sku => $items) {
+      $html .= \PACMEC\Util\Html::tag('p', "*** *** Revisando ref: {$sku} *** ***", [], []);
+      $i = 0;
+      foreach ($items as $item) {
+        $html .= \PACMEC\Util\Html::tag('p', "*** {$item['name']} ***", [], []);
+        $html .= \PACMEC\Util\Html::tag('img', '', [], ['src' => $item['path_short'], 'width'=>"75px"], true);
+
+        if ($item['product'] > 0 && $item['in_product'] == true && $item['in_folder'] == true) {
+          $html .= \PACMEC\Util\Html::tag('p', "Existente.", [], []);
+          $html .= \PACMEC\Util\Html::tag('i', "", ['fa fa-check-square-o'], []);
+        }
+        elseif ($item['product'] > 0 && $item['in_product'] == true) {
+
+        }
+        elseif ($item['product'] > 0 && $item['in_product'] == false) {
+          $create = new Self();
+          $create->name = $item['name'];
+          $create->type = $item['type'];
+          $create->size = $item['size'];
+          $create->product = $item['product'];
+          $create->path_full = $item['path_full'];
+          $create->path_short = $item['path_short'];
+          $create->created_by = \userID();
+          $create->ordering = $i;
+          $r_cretating = $create->create([
+            "name"
+            , "type"
+            , "size"
+            , "product"
+            , "path_full"
+            , "path_short"
+            , "created_by"
+            , "ordering"
+          ]);
+
+          if($create->isValid()){
+            $html .= \PACMEC\Util\Html::tag('p', "Agregada: {$create->id}", [], []);
+            $html .= \PACMEC\Util\Html::tag('i', "", ['fa fa-check-square-o'], []);
+          } else {
+            $html .= \PACMEC\Util\Html::tag('p', "Error creando.", [], []);
+            $html .= \PACMEC\Util\Html::tag('i', "", ['fa fa-times'], []);
+          }
+          // $html .= \PACMEC\Util\Html::tag('p', "{$sku}: ".json_encode($item), [], []);
+        }
+        elseif (!($item['product'] > 0)) {
+          $html .= \PACMEC\Util\Html::tag('p', "Producto no existe.", [], []);
+          $html .= \PACMEC\Util\Html::tag('i', "", ['fa fa-times'], []);
+        }
+        $i++;
+      }
+    }
+    $html .= \PACMEC\Util\Html::tag('p', "*** *** *** Finish *** *** ***", [], []);
+    return $html;
+  }
+
 }
