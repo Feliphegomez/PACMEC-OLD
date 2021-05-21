@@ -9,19 +9,11 @@
  * @version    0.0.1
  */
 namespace PACMEC\System;
-
+#use PHPExcel\PHPExcel_IOFactory;
 class Product extends \PACMEC\System\BaseRecords
 {
   const TABLE_NAME = 'products';
   const COLUMNS_AUTO_T  = [
-    /*"unid" => [
-      "s"      => "_",
-      "autoT"  => true,
-      "parts"  => [
-        "unids",
-        "unid",
-      ]
-    ]*/
   ];
 	public $in_promo      = false;
 	public $price         = 0.00;
@@ -100,7 +92,12 @@ class Product extends \PACMEC\System\BaseRecords
       , __a('price_promo')
       #, __a('created')
       #, __a('updated')
-      , ''
+      , \PHPStrap\Util\Html::tag('a', \PHPStrap\Util\Html::tag('i', '', ['fa fa-database']), ['btn btn-sm btn-outline-teal btn-hover-teal'], [
+        'href'=>__url_s("/%admin_products_slug%?export=true")
+      ])
+      . \PHPStrap\Util\Html::tag('a', \PHPStrap\Util\Html::tag('i', '', ['fa fa-cloud-upload']), ['btn btn-sm btn-outline-teal btn-hover-teal'], [
+        'href'=>__url_s("/%admin_products_slug%?import=true")
+      ])
     ]);
     foreach ($items as $item) {
       $tags = "";
@@ -228,4 +225,57 @@ class Product extends \PACMEC\System\BaseRecords
   		return 0;
   	}
   }
+
+  public static function exportar2excel($items=[], $columns=[], $filename="nombredelfichero.xls", $format="Excel5")
+  {
+    $excel = new \PHPExcel();
+    $excel->setActiveSheetIndex(0);
+    $excel->getActiveSheet()->setTitle('test worksheet');
+
+    $row    = 1;
+    $column = 0;
+
+    foreach ($columns as $column_name) {
+      $excel->getActiveSheet()->setCellValue(\getNameFromNumberZero($column).$row, $column_name);
+      $excel->getActiveSheet()->getStyle(\getNameFromNumberZero($column).$row)->getFont()->setBold(true);
+      /*
+      $excel->getActiveSheet()->getStyle("{$letter}{$column}")->getFont()->setSize(14);
+      */
+      $column++;
+    }
+    $row++;
+
+    foreach ($items as $item) {
+      $column = 0;
+      foreach ($columns as $k) {
+        if(isset($item->{$k})){
+          if(is_array($item->{$k}) || is_object($item->{$k})){
+            $excel->getActiveSheet()->setCellValue(\getNameFromNumberZero($column).$row, json_encode($item->{$k}));
+          }
+          else {
+            $excel->getActiveSheet()->setCellValue(\getNameFromNumberZero($column).$row, $item->{$k});
+          }
+        }
+
+        $column++;
+      }
+      $row++;
+    }
+
+
+    $instance = \PHPExcel_IOFactory::createWriter($excel, $format);
+    if($format == "Excel2007"){ header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'); }
+    else { header('Content-Type: application/vnd.ms-excel'); }
+
+    header("Expires: 0");
+    #header('Cache-Control: max-age=0'); //no cache
+    header("Cache-Control: must-revalidate, post-check=0, pre-check=0");
+    header("Content-Type: application/force-download");
+    header("Content-Type: application/octet-stream");
+    header("Content-Type: application/download");;
+    header('Content-Disposition: attachment;filename="'.$filename.'";');
+
+    $instance->save('php://output');
+  }
+
 }

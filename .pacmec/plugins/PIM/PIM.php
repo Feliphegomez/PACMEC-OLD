@@ -126,6 +126,29 @@ function pacmec_PIM_activation()
        $GLOBALS['PACMEC']['route']->description = infosite('sitedescr');
        $GLOBALS['PACMEC']['route']->layout = 'pages-none';
        $GLOBALS['PACMEC']['route']->content = '[pacmec-admin-products-table][/pacmec-admin-products-table]';
+
+       $export           = isset($GLOBALS['PACMEC']['fullData']['export']) ? true : false;
+       if($export == true){
+         $info_tables    = $GLOBALS['PACMEC']['DB']->get_tables_info();
+         ## All Columns
+         # \PACMEC\System\Product::exportar2excel(\PACMEC\System\Product::get_all(), $info_tables['products']->columns);
+         \PACMEC\System\Product::exportar2excel(\PACMEC\System\Product::get_all(), [
+           "id"
+           , "sku"
+           , "name"
+           , "description"
+           , "description_full"
+           , "description_full_style"
+           , "common_names"
+           , "unid"
+           , "is_active"
+           , "available"
+           , "price_normal"
+           , "price_promo"
+           , "observations"
+         ]);
+         exit;
+       }
      }
      else if(isset($_exploder[0]) && count($_exploder)==1 && $_exploder[0] === $GLOBALS['PACMEC']['permanents_links']['%admin_galleries_shop_slug%']) {
        $GLOBALS['PACMEC']['route']->id = 1;

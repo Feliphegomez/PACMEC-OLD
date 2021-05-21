@@ -2541,6 +2541,7 @@ add_shortcode('pacmec-theme-console', 'pacmec_theme_console');
 function pacmec_admin_products_table($atts, $content="")
 {
   global $PACMEC;
+  $import         = isset($PACMEC['fullData']['import']) ? true : false;
   $product_id     = isset($PACMEC['fullData']['product_id']) ? $PACMEC['fullData']['product_id'] : false;
   $remove_product = isset($PACMEC['fullData']['remove_product']) ? $PACMEC['fullData']['remove_product'] : false;
   $create_item    = isset($PACMEC['fullData']['create_item']) ? $PACMEC['fullData']['create_item'] : false;
@@ -2549,7 +2550,13 @@ function pacmec_admin_products_table($atts, $content="")
   $url_redirect      = isset($PACMEC['fullData']['redirect']) ? $PACMEC['fullData']['redirect'] : infosite('siteurl').__url_S("/%admin_products_slug%");
 
   $html = "";
-  if($product_id==false && $create_item == false && $remove_product == false){
+  if($import == true){
+    $info_tables    = $PACMEC['DB']->get_tables_info();
+    echo "Cargando archivo...";
+    echo "Leyendo archivo...";
+    exit;
+  }
+  else if($product_id==false && $create_item == false && $remove_product == false){
     $info_tables    = $PACMEC['DB']->get_tables_info();
     $html .= \PACMEC\System\Product::table_list_html_pagination(\PACMEC\System\Product::get_all_pagination($page, $limit), $info_tables['products']->rows, $page, $limit);
   }

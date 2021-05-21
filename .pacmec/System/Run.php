@@ -283,6 +283,7 @@ class Run
   {
     try {
       require_once PACMEC_PATH . '/.prv/solvemedialib.php';
+      require_once PACMEC_PATH . '/libs/PHPExcel.php';
       require_once PACMEC_PATH . '/actions.php';
       require_once PACMEC_PATH . '/shortcodes.php';
     } catch (\Exception $e) {
@@ -310,6 +311,7 @@ class Run
   public static function pacmec_create_globals_vars() : void
   {
     global $PACMEC;
+    putenv('TMPDIR=' . PACMEC_PATH . "/.tmp");
     if($_SERVER['SERVER_NAME'] == PACMEC_HOST)
     {
       $PACMEC['hooks'] = \PACMEC\System\Hooks::getInstance();

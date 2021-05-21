@@ -1076,6 +1076,29 @@ function zfill($input, $l=10, $sp="0")
 {
   return str_pad($input, $l, $sp, STR_PAD_LEFT);
 }
+
+function getNameFromNumberZero($num) {
+  $numeric = $num % 26;
+  $letter = chr(65 + $numeric);
+  $num2 = intval($num / 26);
+  if ($num2 > 0) {
+      return getNameFromNumberZero($num2 - 1) . $letter;
+  } else {
+      return $letter;
+  }
+}
+
+function getNameFromNumberOne($num) {
+  $numeric = ($num - 1) % 26;
+  $letter = chr(65 + $numeric);
+  $num2 = intval(($num - 1) / 26);
+  if ($num2 > 0) {
+      return getNameFromNumberOne($num2) . $letter;
+  } else {
+      return $letter;
+  }
+}
+
 /** Short access Hooks **/
 /**
  * Execute functions hooked on a specific action hook.
