@@ -1516,6 +1516,7 @@ function pacmec_form_create_order_site($atts=[], $content='')
             $order->email                     = $PACMEC['fullData']['email'];
             $order->phone                     = $PACMEC['fullData']['phone'];
             $order->mobile                    = $PACMEC['fullData']['mobile'];
+            $order->status                    = \infosite('orders_status_default_site');
             if(isset($PACMEC['fullData']['company_name']) && !empty($PACMEC['fullData']['company_name'])) $order->company_name = $PACMEC['fullData']['company_name'];
             $order->customer_ip               = \getIpRemote();
             $order->obs                       = __a("order_create_from_site");
@@ -1576,8 +1577,7 @@ function pacmec_form_create_order_site($atts=[], $content='')
               echo "<meta http-equiv=\"refresh\" content=\"0;URL='{$order->link_view}'\" />";
               return true;
             }
-          } else {
-            $form->setErrorMessage(__a('form_invalid'));
+            $form->setErrorMessage(__a('error_create_order'));
             return false;
           }
           $form->setErrorMessage(__a('form_invalid'));

@@ -133,6 +133,7 @@ class Product extends \PACMEC\System\BaseRecords
   public static function table_list_html_pagination(array $items, $total_result, $page=1, $limit=25) : String
   {
     global $PACMEC;
+    # echo json_encode([$items, $total_result, $page, $limit]);
     $max_pages_float = (float) ($total_result/$limit);
     $max_pages = (int) ($total_result/$limit);
     if($max_pages<$max_pages_float) $max_pages += 1;

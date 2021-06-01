@@ -227,6 +227,10 @@ class Orders extends \PACMEC\System\BaseRecords
     			$items_send[] = $this->{$i};
     		}
     	}
+
+      #echo json_encode($columns_f)."\n";
+      #echo json_encode($this)."\n";
+
       $sql = "INSERT INTO `{$GLOBALS['PACMEC']['DB']->getTableName(SELF::TABLE_NAME)}` (".implode(',', $columns_f).")
         SELECT ".implode(",", $columns_a)."
         WHERE NOT EXISTS(SELECT 1 FROM `{$GLOBALS['PACMEC']['DB']->getTableName(SELF::TABLE_NAME)}` WHERE ".implode(" AND ", $columns_b).")";
@@ -249,6 +253,7 @@ class Orders extends \PACMEC\System\BaseRecords
       }
       return 0;
   	}catch (Exception $e){
+      echo json_encode($e->getMessage());
   		return 0;
   	}
   }

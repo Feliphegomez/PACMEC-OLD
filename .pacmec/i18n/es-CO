@@ -71,18 +71,22 @@ products_or_services_omits=                 Omitidos
 products_or_services_pending=               Pendientes
 products_or_services_close=                 Pagados
 
+orders_dashboard=                           Consola de ordenes
 orders_items=                               Prods / Servs
 orders_omits=                               Ords omitidas
 orders_close=                               Ords completas
-orders_closed=                               Ords cerradas
+orders_closed=                              Ords cerradas
 orders_sales=                               Ords negoc.
 orders_open=                                Ords abiertas
 orders_pending=                             Ords pdtes
 orders_tx=                                  TXs
 
+webmail_slug=                               correo
+
 approved_payments=                          Pagos Aprobados
 
 admin_blog_slug=                            admin-blog
+admin_products_title=                       Admin. Productos
 admin_products_slug=                        admin-products
 
 publish=                                    Publicado
