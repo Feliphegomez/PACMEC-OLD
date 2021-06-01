@@ -3,7 +3,7 @@
  *
  * @package    PACMEC
  * @category   System
- * @copyright  2020-2021 Manager Technology CO & FelipheGomez CO
+ * @copyright  2020-2021 FelipheGomez & FelipheGomez CO
  * @author     FelipheGomez <feliphegomez@gmail.com>
  * @license    license.txt
  * @version    0.0.1
@@ -1226,14 +1226,14 @@ function pacmec_me_add_address($atts=[], $content='')
   $form->Code .= '
   <script>
   function selectCountry(){
-  $(document).ready(function() {
-    $(".js-item-basic-single").select2({
-      placeholder: "'.__a('select_an_option').'",
+    Þ(document).ready(function() {
+      Þ(".js-item-basic-single").select2({
+        placeholder: "'.__a('select_an_option').'",
+      });
     });
-  });
-  $(\'select[name="country"]\').on(\'change\', function() {
-    document.getElementById("'.$form_slug.'").submit();
-  });
+    Þ(\'select[name="country"]\').on(\'change\', function() {
+      document.getElementById("'.$form_slug.'").submit();
+    });
   }
   window.addEventListener(\'load\', selectCountry);
   </script>';
@@ -1268,7 +1268,6 @@ function pacmec_add_part_form_new_address($form)
   foreach (type_options('geo_extra') as $option):
     $options_geo_extra_k[$option->id] = $options_geo_extra[$option->id] = "{$option->name} [{$option->code}]";
   endforeach;
-
   $form->addFieldWithLabel(
     new \PACMEC\Form\Select(
       $options_geo_types_vias
@@ -1299,7 +1298,6 @@ function pacmec_add_part_form_new_address($form)
     , ['pacmec-col m2']
   );
   $form->Code .= \PACMEC\Util\Html::tag('div', '<br>#', ['pacmec-col m1']);
-
   $form->addFieldWithLabel(
     \PACMEC\Form\Text::withNameAndValue('minor_road',
       ""
@@ -1321,6 +1319,7 @@ function pacmec_add_part_form_new_address($form)
     , ''
     , ['pacmec-col m2']
   );
+  $form->Code .= "<div class=\"pacmec-col m12\"><br></div>";
   $form->addFieldWithLabel(
     new \PACMEC\Form\Select(
       $options_geo_extra
@@ -1359,6 +1358,7 @@ function pacmec_add_part_form_new_address($form)
     , ''
     , ['pacmec-col m4']
   );
+  $form->Code .= "<div class=\"pacmec-col m12\"><br></div>";
   $form->addFieldWithLabel(
     new \PACMEC\Form\Select(
       $options_countries
@@ -2551,10 +2551,133 @@ function pacmec_admin_products_table($atts, $content="")
 
   $html = "";
   if($import == true){
-    $info_tables    = $PACMEC['DB']->get_tables_info();
-    echo "Cargando archivo...";
-    echo "Leyendo archivo...";
-    exit;
+    $info_tables   = $PACMEC['DB']->get_tables_info();
+
+    if(isset($_FILES['excel']) && $_FILES['excel']['error']==0) {
+  		$tmpfname    = $_FILES['excel']['tmp_name'];
+  		$excelReader = \PHPExcel_IOFactory::createReaderForFile($tmpfname);
+  		$excelObj    = $excelReader->load($tmpfname);
+  		$worksheet   = $excelObj->getSheet(0);
+  		$lastRow     = $worksheet->getHighestRow();
+      $__columns   = [];
+      $items       = [];
+  		echo "<div class=\"pacmec-responsive\">";
+    		echo "<table class=\"pacmec-table-all table-s\">";
+          $t_columns = count($info_tables['products']->columns);
+          for ($i=0; $i < count($info_tables['products']->columns); $i++) {
+            if(!empty($worksheet->getCellByColumnAndRow($i, 1)->getValue())){
+              $__columns[\getNameFromNumberZero($i)] = $worksheet->getCellByColumnAndRow($i, 1)->getValue();
+            }
+          }
+          for ($row = 1; $row <= $lastRow; $row++) {
+            $item[] = [];
+            foreach ($__columns as $l => $k) {
+                $item[$k] = $worksheet->getCell("{$l}{$row}")->getValue();
+            }
+            $items[] = $item;
+          }
+          echo "<thead>";
+            echo "<tr>";
+              echo "<th scope=\"row\"></th>";
+              echo "<th scope=\"row\">A</th>";
+              echo "<th scope=\"row\">B</th>";
+              echo "<th scope=\"row\">C</th>";
+              echo "<th scope=\"row\">Resultado</th>";
+            echo "</tr>";
+            foreach ($items as $i => $item) {
+              echo "<tr>";
+                echo "<th scope=\"row\">";
+                  echo ($i+1);
+                echo "</th>";
+
+                echo "<th>{$item['id']}</th>";
+                echo "<th>{$item['sku']}</th>";
+                echo "<th>{$item['name']}</th>";
+                  # if($item['id'])
+                  if($i == 0){
+                    echo "<th scope=\"row\"></th>";
+                  } else {
+                    if(empty($item['id'])) {
+                      echo "<th>";
+                        $new_item = new \PACMEC\System\Product();
+                        foreach (array_keys($item) as $k) {
+                          if($k !== 'id') $new_item->{$k} = $item[$k];
+                        }
+                        $new_item->created_by = \userID();
+                        $result_save = $new_item->create(array_keys($item));
+                        if($result_save == true && $new_item->isValid()){
+                          echo " <i class=\"fa fa-check\"></i> Creado {$new_item->id}";
+                        } else {
+                          echo " <i class=\"fa fa-times\"></i> Error creando";
+                        }
+                      echo "</th>";
+                    } else {
+                      echo "<th>";
+                      $new_item = new \PACMEC\System\Product((object) ['id'=>$item['id']]);
+                      if($new_item->isValid())
+                      {
+                        echo "Producto encontrado";
+                        foreach (array_keys($item) as $k) {
+                          $new_item->{$k} = $item[$k];
+                        }
+                        $result_save = $new_item->save(array_keys($item));
+                        if($result_save == true){
+                          echo " <i class=\"fa fa-check\"></i> Actualizado";
+                        } else {
+                          echo " <i class=\"fa fa-times\"></i> Error actualizando";
+                        }
+                      } else {
+                          echo "Producto NO encontrado";
+                      }
+                      echo "</th>";
+                    };
+                  }
+                //echo "<th scope=\"row\">{$item['sku']}</th>";
+              echo "</tr>";
+            }
+          echo "</thead>";
+        echo "</table>";
+  		echo "</div>";
+    } else {
+      #echo "no existe archivo para actualizar";
+      $form_slug         = "admin-product-import-form-pacmec";
+      $result_captcha    = \pacmec_captcha_check($form_slug);
+      $form = new \PACMEC\Form\Form(
+        ''
+        , 'POST'
+        , PACMEC\Form\FormType::Normal
+        , ''
+        , "OK"
+        , ['class' => 'pacmec-card pacmec-light-grey pacmec-padding', 'id' => $form_slug, 'enctype' => "multipart/form-data" ]);
+      $form->setWidths(12,12);
+
+
+      $form->addFieldWithLabel(new \PACMEC\Form\File(
+        [
+          "class" => 'pacmec-input pacmec-border pacmec-round-large',
+          "type" => "file",
+          "name" => "excel"
+        ], [
+        new \PACMEC\Form\Validation\RequiredValidation(__a('required_field'))
+      ])
+      , __a('file') . ' <span class="required">*</span>'
+      , '', []);
+
+
+      /*<form action = "" method = "POST" enctype = "multipart/form-data">
+      	<h2 for="myfile1">Select files : </h2>
+               <input type = "file" name = "excel" onchange="ValidateSingleInput(this)" />
+               <input type = "submit"/><br><br>
+      </form>*/
+      $form->Code .= \PACMEC\Util\Html::tag('div', "<br/>".\pacmec_captcha_widget_html("pacmec-captcha-".randString(11), $form_slug, 'custom-pacmec'), ['pacmec-content']);
+
+      $form->addSubmitButton(__a('btn_confirm_accept'), [
+        'name'=>"submit-{$form_slug}",
+        "class" => 'pacmec-button pacmec-green pacmec-round-large w-100'
+      ]);
+      echo $form;
+    }
+
   }
   else if($product_id==false && $create_item == false && $remove_product == false){
     $info_tables    = $PACMEC['DB']->get_tables_info();

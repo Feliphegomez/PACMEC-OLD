@@ -146,7 +146,7 @@ function pacmec_PIM_activation()
            , "price_normal"
            , "price_promo"
            , "observations"
-         ]);
+         ], date('Y-m-d H:i').".xls");
          exit;
        }
      }

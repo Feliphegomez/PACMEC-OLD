@@ -3,7 +3,7 @@
  *
  * @package    PACMEC
  * @category   System
- * @copyright  2020-2021 Manager Technology CO & FelipheGomez CO
+ * @copyright  2020-2021 FelipheGomez & FelipheGomez CO
  * @author     FelipheGomez <feliphegomez@gmail.com>
  * @license    license.txt
  * @version    0.0.1
@@ -59,7 +59,7 @@ class Run
   public static function pacmec_assets_globals()
   {
     add_style_head(siteinfo('siteurl')   . "/.pacmec/assets/css/pacmec.css"."?&cache=".rand(),  ["rel"=>"stylesheet", "type"=>"text/css", "charset"=>"UTF-8"], 1, false);
-    // add_style_head(siteinfo('siteurl')   . "/.pacmec/assets/css/plugins.css", ["rel"=>"stylesheet", "type"=>"text/css", "charset"=>"UTF-8"], 0.99, false);
+    add_style_head(siteinfo('siteurl')   . "/.pacmec/assets/css/plugins.css", ["rel"=>"stylesheet", "type"=>"text/css", "charset"=>"UTF-8"], 0.99, false);
     add_scripts_head(siteinfo('siteurl') . "/.pacmec/assets/js/plugins.js",   ["type"=>"text/javascript", "charset"=>"UTF-8"], 1, false);
     // add_scripts_head(siteinfo('siteurl') . "/.pacmec/assets/dist/sweetalert2/sweetalert2.all.min.js",    ["type"=>"text/javascript", "charset"=>"UTF-8"], 0, false);
     // add_scripts_head(siteinfo('siteurl') . "/.pacmec/assets/dist/vue/vue.min.js",    ["type"=>"text/javascript", "charset"=>"UTF-8"], 0, false);

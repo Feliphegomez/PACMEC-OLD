@@ -3,7 +3,7 @@
  *
  * @package    PACMEC
  * @category   Functions
- * @copyright  2020-2021 Manager Technology CO & FelipheGomez CO
+ * @copyright  2020-2021 FelipheGomez & FelipheGomez CO
  * @author     FelipheGomez <feliphegomez@gmail.com>
  * @license    license.txt
  * @version    0.0.1
@@ -450,8 +450,21 @@ function pacmec_foot()
             .then(r => {
               console.log("r", r);
               if(r.error == false){
-                console.log("r", "no es error");
-                Þ("#pacmec-change-status-notification-fast-icon-"+data.notification_id).attr("class", r.data)
+                Þ("#pacmec-change-status-notification-fast-icon-"+data.notification_id).attr("class", r.data);
+                Þ(".pacmec-user-notifications-count").each((a,b) => {
+                  $child = Þ(b);
+                  console.log("a", a);
+                  console.log("b", b);
+                  console.log("$child", $child);
+                  console.log("$child.text()", $child.text());
+                  $count = parseInt($child.text());
+                  if(Number.isInteger($count)){
+                    $child.text($count-1);
+                  }
+                });
+              } else {
+                console.log("error", r);
+                console.error(r);
               }
             });
           }

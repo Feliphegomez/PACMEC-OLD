@@ -49,6 +49,7 @@ company_name=                               Empresa
 form_invalid=                               Revisa los datos e intenta nuevamente
 read_more=                                  Leer mas
 see_all_notifications=                      Todas las notificaciones
+you_have_notification_news_s=               Tienes %s notificaciones nuevas
 articles=                                   Articulos
 tags=                                       Etiquetas
 btn_cancel=                                 Cancelar
@@ -86,6 +87,8 @@ admin_products_slug=                        admin-products
 
 publish=                                    Publicado
 draft=                                      Borrador
+
+other_links=                                Otros enlaces
 
 captcha_r_error=                            Ocurrio un error con el puzzle, intenta nuevamente.
 captcha_r_success=                          Puzzle comprobado con éxito.
@@ -137,8 +140,8 @@ twitter=                                    Twitter
 
 help_center=                                Centro de ayuda
 customer_service=                           Servicio al Cliente
-support_hours_title=                        Soporte 24/7
-support_hours_content=                      Soporte 24horas 7dias
+support_hours_title=                        Servicio 24/7
+support_hours_content=                      Compra 24 7
 
 me_notifications=                           Mis notificaciones
 notifications=                              Notificaciones
@@ -238,14 +241,14 @@ shopping_cart=                              Carrito de compras
 cart_title=                                 Carrito
 view_products_slug=                         ver-producto
 stores=                                     Tiendas
-money_return_title=                         Devolución
+money_return_title=                         Paga a tu medida
+money_return_content=                       Realiza pagos parciales
 free_shipping_title=                        Envío gratis
-free_shipping_content=                      Envíos gratis
-money_return_content=                       Garantía de devolución
+free_shipping_content=                      Aplican terminos y condiciones
 discount=                                   Descuento
 discounts=                                  Descuentos
-order_discount_title=                       Orden de descuento
-order_discount_content=                     Descuentos especiales
+order_discount_title=                       Descuentos
+order_discount_content=                     Cupones y Descuentos
 new_arrivals=                               Los recién llegados
 products=                                   Productos
 products_view=                              Viendo producto

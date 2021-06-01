@@ -3,7 +3,7 @@
  *
  * @package    PACMEC
  * @category   PIM
- * @copyright  2020-2021 Manager Technology CO & FelipheGomez CO
+ * @copyright  2020-2021 FelipheGomez & FelipheGomez CO
  * @author     FelipheGomez <feliphegomez@gmail.com>
  * @license    license.txt
  * @version    0.0.1
@@ -230,7 +230,7 @@ class Product extends \PACMEC\System\BaseRecords
   {
     $excel = new \PHPExcel();
     $excel->setActiveSheetIndex(0);
-    $excel->getActiveSheet()->setTitle('test worksheet');
+    $excel->getActiveSheet()->setTitle('PACMEC');
 
     $row    = 1;
     $column = 0;
@@ -249,8 +249,16 @@ class Product extends \PACMEC\System\BaseRecords
       $column = 0;
       foreach ($columns as $k) {
         if(isset($item->{$k})){
-          if(is_array($item->{$k}) || is_object($item->{$k})){
-            $excel->getActiveSheet()->setCellValue(\getNameFromNumberZero($column).$row, json_encode($item->{$k}));
+          if($k=='common_names'){
+            $tags = [];
+            foreach ($item->{$k} as $a) {
+              $tags[] = $a;
+            }
+            $excel->getActiveSheet()->setCellValue(
+              \getNameFromNumberZero($column).$row
+              , implode(',', $tags)
+            );
+            //implode(',', json_decode($item->{$k}[0]))
           }
           else {
             $excel->getActiveSheet()->setCellValue(\getNameFromNumberZero($column).$row, $item->{$k});
