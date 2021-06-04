@@ -15,6 +15,7 @@ function pacmec_CMS_activation()
 {
  try {
    require_once 'includes/shortcodes.php';
+   require_once 'models/Faqs.php';
    $tbls = [
      'posts',
      'posts_pictures',

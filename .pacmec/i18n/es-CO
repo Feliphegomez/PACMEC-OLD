@@ -236,6 +236,8 @@ hash=                                       Contraseña
 confirm_hash=                               Confirme la contraseña
 permissions=                                Permisos
 
+services_slug=                              servicios
+
 shop=                                       Tienda
 shop_title=                                 Explora nuestra tienda
 shop_slug=                                  explorar-tienda

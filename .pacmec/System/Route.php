@@ -112,7 +112,6 @@ class Route extends \PACMEC\System\ModeloBase
 		global $PACMEC;
 		$redirect = (isset($_SERVER['HTTP_REFERER'])) ? $_SERVER['HTTP_REFERER'] : infosite("siteurl").$GLOBALS['PACMEC']['path'];
 		$url_login = infosite("siteurl").__url_s("/%pacmec_signin%");
-
 		if($arg !== null){
 			if(\is_object($arg) || \is_array($arg)){
 				$arg = (array) $arg;
@@ -142,7 +141,6 @@ class Route extends \PACMEC\System\ModeloBase
 					}
 				}
 			}
-
 			if(!$this->isValid()){
 				$_explo = explode('/', $GLOBALS['PACMEC']['path']);
 				$_exploder = [];
@@ -201,38 +199,7 @@ class Route extends \PACMEC\System\ModeloBase
 					$this->layout = 'pages-error';
 					$this->content = "[pacmec-errors title=\"route_no_actived_title\" content=\"route_no_actived_content\"][/pacmec-errors]";
 				}
-			 /*
-			 else if(isset($detectAPI[1]) && $detectAPI[1] == 'pacmec-close-session'){
-				 $redirect = infosite("siteurl").infosite("homeurl");
-				 $GLOBALS['PACMEC']['session']->close();
-				 header("Location: ".$redirect);
-				 echo "<meta http-equiv=\"refresh\" content=\"0; url={$redirect}\">";
-				 exit;
-			 } else if(isset($detectAPI[1]) && $detectAPI[1] == 'pacmec-form-sign'){
-				 $model_route = new PACMEC\ROUTE();
-				 $model_route->theme = 'system';
-				 $model_route->component = 'pages-signin';
-				 $model_route->title = _autoT('signin');
-				 $args = dataFull();
-			 } else if(isset($detectAPI[1]) && $detectAPI[1] == 'pacmec-recover-password'){
-				 $model_route = new PACMEC\ROUTE();
-				 $model_route->theme = 'system';
-				 $model_route->component = 'pages-recover-password';
-				 $model_route->title = _autoT('recover_password');
-				 $args = dataFull();
-			 } else if(isset($detectAPI[1]) && $detectAPI[1] == 'pacmec-form-contact'){
-				 header('Content-Type: application/json');
-				 $merge = dataFull();
-				 $args = array_merge(['args'=>$merge], $merge);
-				 get_part('components/contact-form-backend', PACMEC_CRM_COMPONENTS_PATH, $args);
-				 exit;
-			 }
-			 */
 			}
-			//$this->title = __a($this->title);
-			// $this->description = __a($this->description);
-			//$this->getMeta();
-
 		}
 		if(is_null($this->theme)) $this->theme = \infosite('theme_default');
 		if(\validate_theme($this->theme)==false) $this->theme = \infosite('theme_default');
@@ -242,32 +209,10 @@ class Route extends \PACMEC\System\ModeloBase
 			$this->content = "[pacmec-errors title=\"error_404_title\" content=\"error_404_content\"][/pacmec-errors]";
 		} else {
 			$this->keywords .= ','.infosite('sitekeywords');
-
 			$this->title = __a($this->title);
 		}
 		if(empty($this->keywords)) $this->keywords = infosite('sitekeywords');
 		$this->load_ratings();
-		/*
-
-		  public static function get_all_by($k, $v)
-		  {
-		    try {
-		      $class = get_called_class();
-		      $r = [];
-		      $sql = "Select * from `".$class::get_table()."` WHERE `{$k}`=?";
-					$result = Self::link()->FetchAllObject($sql, [$v]);
-		      if($result !== false){ foreach ($result as $item) { $r[] = new $class($item); } }
-		      return $r;
-		    } catch (\Exception $e) {
-		      echo $e->getMessage();
-		      return [];
-		    }
-		  }
-
-		$comments->get_by((object) [
-			'uri' => infosite('siteurl') . $PACMEC['path']
-		]);*/
-		//$this->comments = $comments;
 	}
 
 	private function load_ratings()

@@ -37,17 +37,13 @@ function pacmec_PIM_activation()
      }
    }
    require_once PACMEC_PATH."/plugins/PIM/models/Filters.php";
-
    \add_action('route_extends_path', function(){
      // Explorar Path URI en caso de tener contenido de productos
      $_explo = explode('/', $GLOBALS['PACMEC']['path']);
      $_exploder = [];
      foreach ($_explo as $key => $value) { if(!empty($value)) $_exploder[] = $value; }
      // 3 atributos para el producto
-     if(
-       isset($_exploder[2]) && count($_exploder)==3 && $_exploder[0] === $GLOBALS['PACMEC']['permanents_links']['%products_view%']
-       || isset($_exploder[2]) && count($_exploder)==3 && $_exploder[0] === $GLOBALS['PACMEC']['permanents_links']['%products_embeded%']
-     ) {
+     if(isset($_exploder[2]) && count($_exploder)==3 && $_exploder[0] === $GLOBALS['PACMEC']['permanents_links']['%products_view%'] || isset($_exploder[2]) && count($_exploder)==3 && $_exploder[0] === $GLOBALS['PACMEC']['permanents_links']['%products_embeded%']) {
        if(is_numeric($_exploder[1])){
          $search_product = new \PACMEC\System\Product((object) ['id'=>$_exploder[1]]);
          if($search_product->isValid()){
@@ -75,17 +71,12 @@ function pacmec_PIM_activation()
        }
      }
      // 1 Atributo para explorador de la tienda
-     else if(isset($_exploder[0]) && count($_exploder)==1 && $_exploder[0] === $GLOBALS['PACMEC']['permanents_links']['%shop_slug%']) {
-       $GLOBALS['PACMEC']['route']->id = 1;
-       $GLOBALS['PACMEC']['route']->title = __a('shop_title');
+     else if(isset($_exploder[0]) && count($_exploder)==1 && $_exploder[0] === $GLOBALS['PACMEC']['permanents_links']['%shop_slug%']) {       $GLOBALS['PACMEC']['route']->title = __a('shop_title');
        $GLOBALS['PACMEC']['route']->description = infosite('sitedescr');
        $GLOBALS['PACMEC']['route']->layout = 'pages-products';
      }
      // 1 Atributo para ver una orden por ref
-     elseif(
-       isset($_exploder[1]) && count($_exploder)==2 && $_exploder[0] === $GLOBALS['PACMEC']['permanents_links']['%order_view%']
-       || isset($_exploder[1]) && count($_exploder)==2 && $_exploder[0] === $GLOBALS['PACMEC']['permanents_links']['%order_view_embeded_slug%']
-     ) {
+     elseif(isset($_exploder[1]) && count($_exploder)==2 && $_exploder[0] === $GLOBALS['PACMEC']['permanents_links']['%order_view%'] || isset($_exploder[1]) && count($_exploder)==2 && $_exploder[0] === $GLOBALS['PACMEC']['permanents_links']['%order_view_embeded_slug%']) {
        if(is_numeric($_exploder[1])){
          $order = new \PACMEC\System\Orders((object) ['order_id' => $_exploder[1]]);
        } else {
@@ -159,8 +150,14 @@ function pacmec_PIM_activation()
        $GLOBALS['PACMEC']['route']->content = '[pacmec-admin-galleries-shop-table][/pacmec-admin-galleries-shop-table]';
      }
 
-     #echo json_encode($GLOBALS['PACMEC']['route']);
-     #exit;
+
+     // 1 Atributo para explorador de los servicios
+     else if(isset($_exploder[0]) && count($_exploder)==1 && $_exploder[0] === $GLOBALS['PACMEC']['permanents_links']['%services_slug%']) {
+       $GLOBALS['PACMEC']['route']->id = 1;
+       $GLOBALS['PACMEC']['route']->title = __a('services');
+       $GLOBALS['PACMEC']['route']->description = infosite('sitedescr');
+       $GLOBALS['PACMEC']['route']->layout = 'pages-services';
+     }
    });
  } catch (\Exception $e) {
    echo $e->getMessage();

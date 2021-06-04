@@ -13,20 +13,23 @@
 
 function pacmec_CRM_activation()
 {
- try {
-   require_once 'includes/shortcodes.php';
-   $tbls = [
+  try {
+    require_once 'includes/definitions.php';
+    include_once 'models/ServicesCharacteristics.php';
+    include_once 'models/Services.php';
+    require_once 'includes/shortcodes.php';
+    $tbls = [
      'orders',
      'orders_status',
-   ];
-   foreach ($tbls as $tbl) {
+    ];
+    foreach ($tbls as $tbl) {
      if(!pacmec_tbl_exist($tbl)){
        throw new \Exception("Falta la tbl: {$tbl}", 1);
      }
-   }
- } catch (\Exception $e) {
-   echo $e->getMessage();
-   exit;
- }
+    }
+  } catch (\Exception $e) {
+    echo $e->getMessage();
+    exit;
+  }
 }
 register_activation_plugin('CRM', 'pacmec_CRM_activation');
