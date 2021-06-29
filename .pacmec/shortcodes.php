@@ -1531,19 +1531,19 @@ function pacmec_form_create_order_site($atts=[], $content='')
               foreach ($PACMEC['session']->shopping_cart as $key => $item) {
                 $k_vals = explode(':', $key);
                 switch ($k_vals[0]) {
-                  case 'product':
-                  if(isset($k_vals[1])){
-                    $ab = new \PACMEC\System\OrdersItems();
-                    $ab->order_id = $order->id;
-                    $ab->type = $k_vals[0];
-                    $ab->ref   = $k_vals[1];
-                    $ab->quantity = $item->quantity;
-                    $ab->unit_price = $item->data->price;
-                    $result = $ab->create();
-                    if($result!==false && $result>0){
-                      $PACMEC['session']->remove_from_cart($item->id, $item->session_id);
+                  case 'product' || 'service':
+                    if(isset($k_vals[1])){
+                      $ab = new \PACMEC\System\OrdersItems();
+                      $ab->order_id = $order->id;
+                      $ab->type = $k_vals[0];
+                      $ab->ref   = $k_vals[1];
+                      $ab->quantity = $item->quantity;
+                      $ab->unit_price = $item->data->price;
+                      $result = $ab->create();
+                      if($result!==false && $result>0){
+                        $PACMEC['session']->remove_from_cart($item->id, $item->session_id);
+                      }
                     }
-                  }
                   break;
                   default:
                   break;
@@ -1726,12 +1726,12 @@ function pacmec_form_create_order_site($atts=[], $content='')
   $form->Code .= '
   <script>
   function selectCountry(){
-    $(document).ready(function() {
-      $(".js-item-basic-single").select2({
+    Þ(document).ready(function() {
+      Þ(".js-item-basic-single").select2({
         placeholder: "'.__a('select_an_option').'",
       });
     });
-    $(\'select[name="country"]\').on(\'change\', function() {
+    Þ(\'select[name="country"]\').on(\'change\', function() {
       document.getElementById("'.$form_slug.'").submit();
     });
   }
@@ -2537,6 +2537,744 @@ function pacmec_theme_console($atts, $content="")
  return get_template_part("template-parts/consoles/{$args['console']}");
 }
 add_shortcode('pacmec-theme-console', 'pacmec_theme_console');
+
+function pacmec_admin_services_table($atts, $content="")
+{
+  global $PACMEC;
+  $import         = isset($PACMEC['fullData']['import']) ? true : false;
+  $service_id     = isset($PACMEC['fullData']['service_id']) ? $PACMEC['fullData']['service_id'] : false;
+  $remove_service = isset($PACMEC['fullData']['remove_service']) ? $PACMEC['fullData']['remove_service'] : false;
+  $create_item    = isset($PACMEC['fullData']['create_item']) ? $PACMEC['fullData']['create_item'] : false;
+  $limit          = isset($PACMEC['fullData']['limit']) ? $PACMEC['fullData']['limit'] : siteinfo('pages_limit');
+  $page           = isset($PACMEC['fullData']['page'])  ? $PACMEC['fullData']['page']  : 1;
+  $url_redirect      = isset($PACMEC['fullData']['redirect']) ? $PACMEC['fullData']['redirect'] : infosite('siteurl').__url_S("/%admin_services_slug%");
+
+  $html = "";
+  if($import == true){
+    $info_tables   = $PACMEC['DB']->get_tables_info();
+
+    if(isset($_FILES['excel']) && $_FILES['excel']['error']==0) {
+  		$tmpfname    = $_FILES['excel']['tmp_name'];
+  		$excelReader = \PHPExcel_IOFactory::createReaderForFile($tmpfname);
+  		$excelObj    = $excelReader->load($tmpfname);
+  		$worksheet   = $excelObj->getSheet(0);
+  		$lastRow     = $worksheet->getHighestRow();
+      $__columns   = [];
+      $items       = [];
+  		echo "<div class=\"pacmec-responsive\">";
+    		echo "<table class=\"pacmec-table-all table-s\">";
+          $t_columns = count($info_tables['services']->columns);
+          for ($i=0; $i < count($info_tables['services']->columns); $i++) {
+            if(!empty($worksheet->getCellByColumnAndRow($i, 1)->getValue())){
+              $__columns[\getNameFromNumberZero($i)] = $worksheet->getCellByColumnAndRow($i, 1)->getValue();
+            }
+          }
+          for ($row = 1; $row <= $lastRow; $row++) {
+            $item[] = [];
+            foreach ($__columns as $l => $k) {
+                $item[$k] = $worksheet->getCell("{$l}{$row}")->getValue();
+            }
+            $items[] = $item;
+          }
+          echo "<thead>";
+            echo "<tr>";
+              echo "<th scope=\"row\"></th>";
+              echo "<th scope=\"row\">A</th>";
+              echo "<th scope=\"row\">B</th>";
+              echo "<th scope=\"row\">C</th>";
+              echo "<th scope=\"row\">Resultado</th>";
+            echo "</tr>";
+            foreach ($items as $i => $item) {
+              echo "<tr>";
+                echo "<th scope=\"row\">";
+                  echo ($i+1);
+                echo "</th>";
+
+                echo "<th>{$item['id']}</th>";
+                echo "<th>{$item['slug']}</th>";
+                echo "<th>{$item['name']}</th>";
+                  # if($item['id'])
+                  if($i == 0){
+                    echo "<th scope=\"row\"></th>";
+                  } else {
+                    if(empty($item['id'])) {
+                      echo "<th>";
+                        $new_item = new \PACMEC\System\Service();
+                        foreach (array_keys($item) as $k) {
+                          if($k !== 'id') $new_item->{$k} = $item[$k];
+                        }
+                        $new_item->created_by = \userID();
+                        $result_save = $new_item->create(array_keys($item));
+                        if($result_save == true && $new_item->isValid()){
+                          echo " <i class=\"fa fa-check\"></i> Creado {$new_item->id}";
+                        } else {
+                          echo " <i class=\"fa fa-times\"></i> Error creando";
+                        }
+                      echo "</th>";
+                    } else {
+                      echo "<th>";
+                      $new_item = new \PACMEC\System\Service((object) ['id'=>$item['id']]);
+                      if($new_item->isValid())
+                      {
+                        echo "servicio encontrado";
+                        foreach (array_keys($item) as $k) {
+                          $new_item->{$k} = $item[$k];
+                        }
+                        $result_save = $new_item->save(array_keys($item));
+                        if($result_save == true){
+                          echo " <i class=\"fa fa-check\"></i> Actualizado";
+                        } else {
+                          echo " <i class=\"fa fa-times\"></i> Error actualizando";
+                        }
+                      } else {
+                          echo "servicio NO encontrado";
+                      }
+                      echo "</th>";
+                    };
+                  }
+                //echo "<th scope=\"row\">{$item['slug']}</th>";
+              echo "</tr>";
+            }
+          echo "</thead>";
+        echo "</table>";
+  		echo "</div>";
+    } else {
+      #echo "no existe archivo para actualizar";
+      $form_slug         = "admin-service-import-form-pacmec";
+      $result_captcha    = \pacmec_captcha_check($form_slug);
+      $form = new \PACMEC\Form\Form(
+        ''
+        , 'POST'
+        , PACMEC\Form\FormType::Normal
+        , ''
+        , "OK"
+        , ['class' => 'pacmec-card pacmec-light-grey pacmec-padding', 'id' => $form_slug, 'enctype' => "multipart/form-data" ]);
+      $form->setWidths(12,12);
+      $form->addFieldWithLabel(new \PACMEC\Form\File(
+        [
+          "class" => 'pacmec-input pacmec-border pacmec-round-large',
+          "type" => "file",
+          "name" => "excel"
+        ], [
+        new \PACMEC\Form\Validation\RequiredValidation(__a('required_field'))
+      ])
+      , __a('file') . ' <span class="required">*</span>'
+      , '', []);
+      $form->Code .= \PACMEC\Util\Html::tag('div', "<br/>".\pacmec_captcha_widget_html("pacmec-captcha-".randString(11), $form_slug, 'custom-pacmec'), ['pacmec-content']);
+      $form->addSubmitButton(__a('btn_confirm_accept'), [
+        'name'=>"submit-{$form_slug}",
+        "class" => 'pacmec-button pacmec-green pacmec-round-large w-100'
+      ]);
+      echo $form;
+    }
+
+  }
+  else if($service_id==false && $create_item == false && $remove_service == false){
+    $info_tables    = $PACMEC['DB']->get_tables_info();
+    $html .= \PACMEC\System\Service::table_list_html_pagination(\PACMEC\System\Service::get_all_pagination($page, $limit), $info_tables['services']->rows, $page, $limit);
+  }
+  elseif ($service_id==false && $create_item == false && $remove_service == true) {
+    $service = new \PACMEC\System\Service((object) ['id' => $remove_service]);
+    if($service->isValid()){
+      $form_slug         = "admin-service-remove-form-pacmec";
+      $result_captcha    = \pacmec_captcha_check($form_slug);
+      $form = new \PACMEC\Form\Form(
+        ''
+        , 'POST'
+        , PACMEC\Form\FormType::Normal
+        , ''
+        , "OK"
+        , ['class'=>'pacmec-card pacmec-light-grey pacmec-padding', 'id'=>$form_slug]);
+      $form->setWidths(12,12);
+      $form->setGlobalValidations([
+        new \PACMEC\Form\Validation\LambdaValidation(__a('error_form_general'), function () use ($PACMEC, $form_slug, $result_captcha, $form, $url_redirect, $service) {
+          if(!isset($PACMEC['fullData']["adcopy_response"]) && ($result_captcha !== 'captcha_disabled')) return false;
+            switch ($result_captcha) {
+              case 'captcha_r_success':
+              case 'captcha_disabled':
+                if(isset($PACMEC['fullData']["submit-{$form_slug}"]) && isset($PACMEC['fullData']["slug"]) && !empty($PACMEC['fullData']['slug']) && $PACMEC['fullData']['slug'] == $service->slug) {
+                  $result_remove = $service->remove_this();
+                  if($result_remove == true){
+                    $form->setSucessMessage(
+                      'OK :: ' . "<meta http-equiv=\"refresh\" content=\"0;URL='{$url_redirect}'\" />"
+                    );
+                    return true;
+                  } else {
+                    $form->setErrorMessage(__a('error_remove_general'));
+                    return false;
+                  }
+                } else {
+                  $form->setErrorMessage(__a('form_invalid'));
+                  return false;
+                }
+                break;
+              default:
+                $form->setErrorMessage(__a($result_captcha));
+                return false;
+                break;
+            }
+            $form->setErrorMessage(__a('form_invalid'));
+            return false;
+        }),
+      ]);
+
+      $form->addFieldWithLabel(\PACMEC\Form\Text::withNameAndValue('slug', '', 254, [
+        new \PACMEC\Form\Validation\RequiredValidation(__a('required_field'))
+        , new \PACMEC\Form\Validation\LambdaValidation(sprintf(__a('type_s_to_eq'), "\"{$service->slug}\""), function ($inputIn) use ($service) {
+          return $inputIn == $service->slug;
+        })
+      ], [
+        "class" => 'pacmec-input pacmec-border pacmec-round-large',
+        "autocomplete" => "off"
+      ])
+      , __a('slug_ref') . ' <span class="required">*</span>'
+      , sprintf(__a('type_s_to_confirm'), \PACMEC\Util\Html::tag('b', $service->slug))
+      , []);
+      $form->Code .= \PACMEC\Util\Html::tag('div', "<br/>".\pacmec_captcha_widget_html("pacmec-captcha-".randString(11), $form_slug, 'custom-pacmec'), ['pacmec-content']);
+      $form->addSubmitButton(__a('btn_confirm_accept'), [
+        'name'=>"submit-{$form_slug}",
+        "class" => 'pacmec-button pacmec-green pacmec-round-large w-100'
+      ]);
+      return $form;
+    } else {
+      return "Contenido no encontrado.";
+    }
+  }
+  elseif ($service_id==false && $create_item == true && $remove_service == false) {
+    $service = new \PACMEC\System\Service();
+    $rules = $service->get_rules();
+    $fields = [];
+    foreach ($rules as $key => $rule) if($rule['required'] == true && $rule['auto_increment'] !== true && $rule['nullValid'] == false) $fields[] = $key;
+    $html .= "<style>.bootstrap-tagsinput { width: 100%; }</style>";
+    $description_full           = isset($PACMEC['fullData']['description_full'])  ? $PACMEC['fullData']['description_full']  : $service->description_full;
+    $description_full_style     = isset($PACMEC['fullData']['description_full_style'])  ? $PACMEC['fullData']['description_full_style']  : $service->description_full_style;
+    $form_slug         = "admin-service-create-form-pacmec";
+    $result_captcha    = \pacmec_captcha_check($form_slug);
+    $form = new \PACMEC\Form\Form(
+      ''
+      , 'POST'
+      , PACMEC\Form\FormType::Normal
+      , 'Error:'
+      , "OK"
+      , ['class'=>'pacmec-container', 'id'=>$form_slug]
+    );
+    $form->setWidths(12,12);
+    $form->setGlobalValidations([
+      new \PACMEC\Form\Validation\LambdaValidation('', function () use ($PACMEC, $form_slug, $result_captcha, $form, $service, $url_redirect) {
+        if(!isset($PACMEC['fullData']["adcopy_response"]) && ($result_captcha !== 'captcha_disabled')) return false;
+        switch ($result_captcha) {
+          case 'captcha_r_success':
+          case 'captcha_disabled':
+            if(
+              isset($PACMEC['fullData']['slug']) && !empty($PACMEC['fullData']['slug'])
+              && isset($PACMEC['fullData']['name']) && !empty($PACMEC['fullData']['name'])
+              && isset($PACMEC['fullData']['description']) && !empty($PACMEC['fullData']['description'])
+              && isset($PACMEC['fullData']['description_full'])
+              && isset($PACMEC['fullData']['unid']) && !empty($PACMEC['fullData']['unid'])
+              && isset($PACMEC['fullData']['is_active']) && !empty($PACMEC['fullData']['is_active'])
+              && isset($PACMEC['fullData']['icon'])
+              && isset($PACMEC['fullData']['price_normal'])
+              && isset($PACMEC['fullData']['price_promo'])
+              && isset($PACMEC['fullData']['observations'])
+            ) {
+              $PACMEC['fullData']['slug'] = strtolower(filter_var(str_replace([' ','%20','  ', '\n'], ['-'], $PACMEC['fullData']['slug']), FILTER_SANITIZE_URL));
+              $PACMEC['fullData']['common_names'] = implode(',', explode(',', $PACMEC['fullData']['common_names']));
+              if(!isset($PACMEC['fullData']['description_full_style'])) $PACMEC['fullData']['description_full_style'] = "";
+              if($service->slug !== $PACMEC['fullData']['slug']) $service->slug = $PACMEC['fullData']['slug'];
+              if($service->name !== $PACMEC['fullData']['name']) $service->name = $PACMEC['fullData']['name'];
+              if($service->description !== $PACMEC['fullData']['description']) $service->description = $PACMEC['fullData']['description'];
+              if($service->common_names !== $PACMEC['fullData']['common_names']) $service->common_names = $PACMEC['fullData']['common_names'];
+              if($service->unid !== $PACMEC['fullData']['unid']) $service->unid = $PACMEC['fullData']['unid'];
+              if($service->is_active !== $PACMEC['fullData']['is_active']) $service->is_active = $PACMEC['fullData']['is_active'];
+              if($service->icon !== $PACMEC['fullData']['icon']) $service->icon = $PACMEC['fullData']['icon'];
+              if($service->price_normal !== $PACMEC['fullData']['price_normal']) $service->price_normal = $PACMEC['fullData']['price_normal'];
+              if($service->price_promo !== $PACMEC['fullData']['price_promo']) $service->price_promo = $PACMEC['fullData']['price_promo'];
+              if($service->observations !== $PACMEC['fullData']['observations']) $service->observations = $PACMEC['fullData']['observations'];
+              if($service->description_full !== $PACMEC['fullData']['description_full']) $service->description_full = $PACMEC['fullData']['description_full'];
+              if($service->description_full_style !== $PACMEC['fullData']['description_full_style']) $service->description_full_style = $PACMEC['fullData']['description_full_style'];
+              $service->created_by = \userID();
+              $result_save = $service->create([
+                "slug"
+                , "name"
+                , "description"
+                , "description_full"
+                , "description_full_style"
+                , "common_names"
+                , "unid"
+                , "is_active"
+                , "created_by"
+                , "icon"
+                , "price_normal"
+                , "price_promo"
+                , "observations"
+              ]);
+              if($result_save == true){
+                $form->setSucessMessage(
+                  __a('save_success')
+                  . "<meta http-equiv=\"refresh\" content=\"0;URL='{$url_redirect}'\" />"
+                );
+                return true;
+              } else {
+                $form->setErrorMessage(__a('save_fail'));
+                return false;
+              }
+            } else {
+              $form->setErrorMessage(__a('form_invalid'));
+              return false;
+            }
+            break;
+          default:
+            $form->setErrorMessage(__a($result_captcha));
+            return false;
+            break;
+        }
+        $form->setErrorMessage(__a('form_invalid'));
+        return false;
+      }),
+    ]);
+    $form->addFieldWithLabel(\PACMEC\Form\Text::withNameAndValue('name', '', 254, [
+        new \PACMEC\Form\Validation\RequiredValidation(__a('required_field'))
+      ], [
+        "class" => 'pacmec-input pacmec-border pacmec-round-large'
+      ])
+      , __a('name') . ' <span class="required">*</span>'
+      , ''
+    , []);
+    $form->addFieldWithLabel(\PACMEC\Form\Text::withNameAndValue('slug', '', 254, [
+        new \PACMEC\Form\Validation\RequiredValidation(__a('required_field'))
+      ], [
+        "class" => 'pacmec-input pacmec-border pacmec-round-large'
+      ])
+      , __a('slug_ref') . ' <span class="required">*</span>'
+      , ''
+    , []);
+    $form->addFieldWithLabel(new \PACMEC\Form\Textarea('', [
+        'class'  => 'pacmec-input pacmec-border pacmec-round-large',
+        "name"   => "description",
+      ], [
+        new \PACMEC\Form\Validation\RequiredValidation(__a('required_field'))
+        , new \PACMEC\Form\Validation\MinLengthValidation(6)
+      ])
+      , __a('description') . ' <span class="required">*</span>'
+      , ''
+      , [
+    ]);
+    $form->addFieldWithLabel(\PACMEC\Form\Text::withNameAndValue('common_names', '', 254, [
+        new \PACMEC\Form\Validation\RequiredValidation(__a('required_field'))
+      ], [
+        "class"             => "pacmec-input pacmec-border pacmec-round-large",
+        "data-role"         => "tagsinput",
+      ])
+      , __a('common_names') . ' <span class="required">*</span>'
+      , ''
+    , []);
+    $form->addFieldWithLabel(\PACMEC\Form\Select::withNameAndOptions('is_active', [
+        ""          => "Seleccione una opcion",
+        "1"   => "servicio disponible en la tienda",
+        "0"     => "servicio oculto",
+      ], $service->is_active, ['1',"0"], ['class'=>'pacmec-input pacmec-border pacmec-round-large'])
+      , __a('status')
+      , ''
+    , []);
+    $form->addFieldWithLabel(\PACMEC\Form\Text::withNameAndValue('icon', '', 254, [
+        new \PACMEC\Form\Validation\RequiredValidation(__a('required_field'))
+      ], [
+        "class"     => "pacmec-input pacmec-border pacmec-round-large number_format",
+      ])
+      , __a('icon') . ' <span class="required">*</span>'
+      , ''
+      , ['pacmec-col s12 m3']
+    );
+    $obj_unids = [""=>"Seleccione una opcion"];
+    $obj_unids_k = [];
+    foreach (type_options('measurement_units') as $option){
+      $obj_unids[$option->code]   = $option->name;
+      $obj_unids_k[] = $option->code;
+    }
+    $form->addFieldWithLabel(\PACMEC\Form\Select::withNameAndOptions('unid', $obj_unids, '', $obj_unids_k, ['class'=>'pacmec-input pacmec-border pacmec-round-large'])
+    , __a('unid')
+    , ''
+    , ['pacmec-col s12 m3']);
+    $form->addFieldWithLabel(\PACMEC\Form\Text::withNameAndValue('price_normal', '', 254, [
+        new \PACMEC\Form\Validation\RequiredValidation(__a('required_field'))
+      ], [
+        "class"     => "pacmec-input pacmec-border pacmec-round-large number_format",
+      ])
+      , __a('price_normal') . ' <span class="required">*</span>'
+      , ''
+      , ['pacmec-col s12 m3']
+    );
+    $form->addFieldWithLabel(\PACMEC\Form\Text::withNameAndValue('price_promo', '', 254, [
+        new \PACMEC\Form\Validation\RequiredValidation(__a('required_field'))
+      ], [
+        "class"     => "pacmec-input pacmec-border pacmec-round-large number_format",
+      ])
+      , __a('price_promo') . ' <span class="required">*</span>'
+      , ''
+      , ['pacmec-col s12 m3']
+    );
+    $form->addFieldWithLabel(new \PACMEC\Form\Textarea('', [
+        'class'  => 'pacmec-input pacmec-border pacmec-round-large',
+        "name"   => "observations",
+      ], [
+      ])
+      , __a('observations')
+      , 'Estas observaciones solo serán visibles por el personal que gestiona las ordenes/servicios/servicios.'
+      , [
+    ]);
+    $form->Code .= \PHPStrap\Util\Html::clearfix();
+    if(infosite('grapesjs_enable')==true) $form->Code .= "<br><div class=\"pacmec-col s12\" id=\"gjs\">{$description_full}<style>{$description_full_style}</style></div>";
+    $form->addFieldWithLabel(new \PACMEC\Form\Textarea($description_full, [
+        'class'  => 'pacmec-input pacmec-border pacmec-round-large',
+        "name"   => "description_full",
+        "id"     => "html",
+      ], [
+        #new \PACMEC\Form\Validation\RequiredValidation(__a('required_field'))
+        #, new \PACMEC\Form\Validation\MinLengthValidation(6)
+      ])
+      , __a('description_full') . ' <span class="required">*</span>'
+      , ''
+      , [
+        ((infosite('grapesjs_enable')==true) ? "hidden" : "")
+    ]);
+    $form->addFieldWithLabel(new \PACMEC\Form\Textarea($description_full_style, [
+        'class'=>'pacmec-input pacmec-border pacmec-round-large',
+        "name" => "description_full_style",
+        "id" => "css",
+      ], [
+      ])
+      , __a('description_full_style')
+      , ''
+      , [
+        ((infosite('grapesjs_enable')==true) ? "hidden" : "")
+    ]);
+    $form->Code .= \PACMEC\Util\Html::tag('div', "<br/>".\pacmec_captcha_widget_html("pacmec-captcha-".randString(11), $form_slug, 'custom-pacmec'), ['pacmec-content']);
+    $form->Code .= "<div class=\"clearfix\"><br></div>";
+    $btn_submit = new \PACMEC\Form\Submit(__a('btn_save'), [
+      'id'=>"submit-{$form_slug}",
+      'name'=>"submit-{$form_slug}",
+      "class" => 'pacmec-btn pacmec-teal pacmec-round-large'
+    ]);
+    if(isset($PACMEC['fullData']['redirect'])) $btn_submit->addHrefButton(__a('btn_cancel'), $PACMEC['fullData']['redirect'], ['pacmec-btn pacmec-gray pacmec-round-large']);
+    $form->Code .= $btn_submit;
+    if (infosite('grapesjs_enable')==true) {
+      $form->Code .= '
+      <style>
+        .gjs-block {
+          width: auto;
+          height: auto;
+          min-height: auto;
+        }
+      </style>
+      <script>
+        var editor = grapesjs.init({
+          height: \'calc(60vh)\',
+          container: \'#gjs\',
+          showOffsets: true,
+          fromElement: true,
+          noticeOnUnload: false,
+          storageManager: false,
+          // plugins: ["gjs-preset-webpage", "gjs-preset-newsletter"],
+          plugins: [
+            "gjs-preset-webpage"
+            ,"gjs-preset-newsletter"
+          ],
+        });
+        const htmlTextarea = document.getElementById(\'html\')
+        const cssTextarea = document.getElementById(\'css\')
+        const updateTextarea = (component, editor)=>{
+          const e = component.em.get("Editor");
+          htmlTextarea.value= e.getHtml();
+          cssTextarea.value= e.getCss();
+        }
+        editor.on(\'component:add\', updateTextarea);
+        editor.on(\'component:update\', updateTextarea);
+        editor.on(\'component:remove\', updateTextarea);
+        const updateInstance = () => {
+          editor.setComponents(htmlTextarea.value)
+          editor.setStyle(cssTextarea.value)
+        }
+        document.getElementById(\'submit-'.$form_slug.'\').onclick=updateInstance;';
+      $form->Code .= "Þ(document).ready(function(){
+          // Þ('.number_format').mask(\"#.##0\", {reverse: true});
+        });";
+      $form->Code .= '</script>';
+    }
+    $html .= $form;
+    return $html;
+  }
+  else {
+    $service = new \PACMEC\System\Service((object) ['id'=>$service_id]);
+    if($service->isValid()){
+      $html .= "<style>.bootstrap-tagsinput { width: 100%; }</style>";
+      $description_full           = isset($PACMEC['fullData']['description_full'])  ? $PACMEC['fullData']['description_full']  : $service->description_full;
+      $description_full_style     = isset($PACMEC['fullData']['description_full_style'])  ? $PACMEC['fullData']['description_full_style']  : $service->description_full_style;
+      $form_slug         = "admin-service-edit-form-pacmec";
+      $result_captcha    = \pacmec_captcha_check($form_slug);
+      $url_redirect      = isset($PACMEC['fullData']['redirect']) ? $PACMEC['fullData']['redirect'] : infosite('siteurl').$PACMEC['path'];
+      $form = new \PACMEC\Form\Form(
+      ''
+      , 'POST'
+      , PACMEC\Form\FormType::Normal
+      , 'Error:'
+      , "OK"
+      , ['class'=>'pacmec-container', 'id'=>$form_slug]);
+      $form->setWidths(12,12);
+      $form->setGlobalValidations([
+        new \PACMEC\Form\Validation\LambdaValidation('', function () use ($PACMEC, $form_slug, $result_captcha, $form, $service, $url_redirect) {
+          if(!isset($PACMEC['fullData']["adcopy_response"]) && ($result_captcha !== 'captcha_disabled')) return false;
+          switch ($result_captcha) {
+            case 'captcha_r_success':
+            case 'captcha_disabled':
+              if(
+                isset($PACMEC['fullData']['slug']) && !empty($PACMEC['fullData']['slug'])
+                && isset($PACMEC['fullData']['name']) && !empty($PACMEC['fullData']['name'])
+                && isset($PACMEC['fullData']['description']) && !empty($PACMEC['fullData']['description'])
+                && isset($PACMEC['fullData']['description_full'])
+                && isset($PACMEC['fullData']['unid']) && !empty($PACMEC['fullData']['unid'])
+                && isset($PACMEC['fullData']['is_active']) && !empty($PACMEC['fullData']['is_active'])
+                && isset($PACMEC['fullData']['icon'])
+                && isset($PACMEC['fullData']['price_normal'])
+                && isset($PACMEC['fullData']['price_promo'])
+                && isset($PACMEC['fullData']['observations'])
+              ) {
+                $PACMEC['fullData']['slug'] = strtolower(filter_var(str_replace([' ','%20','  ', '\n'], ['-'], $PACMEC['fullData']['slug']), FILTER_SANITIZE_URL));
+                $PACMEC['fullData']['common_names'] = implode(',', explode(',', $PACMEC['fullData']['common_names']));
+                if(!isset($PACMEC['fullData']['description_full_style'])) $PACMEC['fullData']['description_full_style'] = "";
+                if($service->slug !== $PACMEC['fullData']['slug']) $service->slug = $PACMEC['fullData']['slug'];
+                if($service->name !== $PACMEC['fullData']['name']) $service->name = $PACMEC['fullData']['name'];
+                if($service->description !== $PACMEC['fullData']['description']) $service->description = $PACMEC['fullData']['description'];
+                if($service->common_names !== $PACMEC['fullData']['common_names']) $service->common_names = $PACMEC['fullData']['common_names'];
+                if($service->unid !== $PACMEC['fullData']['unid']) $service->unid = $PACMEC['fullData']['unid'];
+                if($service->is_active !== $PACMEC['fullData']['is_active']) $service->is_active = $PACMEC['fullData']['is_active'];
+                if($service->icon !== $PACMEC['fullData']['icon']) $service->icon = $PACMEC['fullData']['icon'];
+                if($service->price_normal !== $PACMEC['fullData']['price_normal']) $service->price_normal = $PACMEC['fullData']['price_normal'];
+                if($service->price_promo !== $PACMEC['fullData']['price_promo']) $service->price_promo = (float) $PACMEC['fullData']['price_promo'];
+                if($service->observations !== $PACMEC['fullData']['observations']) $service->observations = $PACMEC['fullData']['observations'];
+                if($service->description_full !== $PACMEC['fullData']['description_full']) $service->description_full = $PACMEC['fullData']['description_full'];
+                if($service->description_full_style !== $PACMEC['fullData']['description_full_style']) $service->description_full_style = $PACMEC['fullData']['description_full_style'];
+                $service->created_by = \userID();
+
+                $result_save = $service->save([
+                  "slug"
+                  , "name"
+                  , "description"
+                  , "description_full"
+                  , "description_full_style"
+                  , "common_names"
+                  , "unid"
+                  , "is_active"
+                  , "created_by"
+                  , "icon"
+                  , "price_normal"
+                  , "price_promo"
+                  , "observations"
+                ]);
+                if($result_save == true){
+                  $form->setSucessMessage(
+                    __a('save_success')
+                    . "<meta http-equiv=\"refresh\" content=\"0;URL='{$url_redirect}'\" />"
+                  );
+                  return true;
+                } else {
+                  $form->setErrorMessage(__a('save_fail'));
+                  return false;
+                }
+              }
+              $form->setErrorMessage(__a('form_invalid'));
+              return false;
+              break;
+            default:
+              $form->setErrorMessage(__a($result_captcha));
+              return false;
+              break;
+          }
+          $form->setErrorMessage(__a('form_invalid'));
+          return false;
+        }),
+      ]);
+      $form->addFieldWithLabel(\PACMEC\Form\Text::withNameAndValue('name', $service->name, 254, [
+          new \PACMEC\Form\Validation\RequiredValidation(__a('required_field'))
+        ], [
+          "class" => 'pacmec-input pacmec-border pacmec-round-large'
+        ])
+        , __a('name') . ' <span class="required">*</span>'
+        , ''
+      , []);
+      $form->addFieldWithLabel(\PACMEC\Form\Text::withNameAndValue('slug', $service->slug, 254, [
+          new \PACMEC\Form\Validation\RequiredValidation(__a('required_field'))
+        ], [
+          "class" => 'pacmec-input pacmec-border pacmec-round-large'
+        ])
+        , __a('slug_ref') . ' <span class="required">*</span>'
+        , ''
+      , []);
+      $form->addFieldWithLabel(new \PACMEC\Form\Textarea($service->description, [
+          'class'  => 'pacmec-input pacmec-border pacmec-round-large',
+          "name"   => "description",
+        ], [
+          new \PACMEC\Form\Validation\RequiredValidation(__a('required_field'))
+          , new \PACMEC\Form\Validation\MinLengthValidation(6)
+        ])
+        , __a('description') . ' <span class="required">*</span>'
+        , ''
+        , [
+      ]);
+      $form->addFieldWithLabel(\PACMEC\Form\Text::withNameAndValue('common_names', implode(',', $service->common_names), 254, [
+          new \PACMEC\Form\Validation\RequiredValidation(__a('required_field'))
+        ], [
+          "class"             => "pacmec-input pacmec-border pacmec-round-large",
+          "data-role"         => "tagsinput",
+        ])
+        , __a('common_names') . ' <span class="required">*</span>'
+        , ''
+      , []);
+      $form->addFieldWithLabel(\PACMEC\Form\Select::withNameAndOptions('is_active', [
+          ""          => "Seleccione una opcion",
+          "1"   => "servicio disponible en la tienda",
+          "0"     => "servicio oculto",
+        ], $service->is_active, ['1',"0"], ['class'=>'pacmec-input pacmec-border pacmec-round-large'])
+        , __a('status')
+        , ''
+      , []);
+      $form->addFieldWithLabel(\PACMEC\Form\Text::withNameAndValue('icon', $service->icon, 254, [
+          new \PACMEC\Form\Validation\RequiredValidation(__a('required_field'))
+        ], [
+          "class"     => "pacmec-input pacmec-border pacmec-round-large number_format",
+        ])
+        , __a('icon') . ' <span class="required">*</span>'
+        , ''
+        , ['pacmec-col s12 m3']
+      );
+      $obj_unids = [""=>"Seleccione una opcion"];
+      $obj_unids_k = [];
+      foreach (type_options('measurement_units') as $option){
+        $obj_unids[$option->code]   = $option->name;
+        $obj_unids_k[] = $option->code;
+      }
+      $form->addFieldWithLabel(\PACMEC\Form\Select::withNameAndOptions('unid', $obj_unids, $service->unid, $obj_unids_k, ['class'=>'pacmec-input pacmec-border pacmec-round-large'])
+      , __a('unid')
+      , ''
+      , ['pacmec-col s12 m3']);
+      $form->addFieldWithLabel(\PACMEC\Form\Text::withNameAndValue('price_normal', $service->price_normal, 254, [
+          new \PACMEC\Form\Validation\RequiredValidation(__a('required_field'))
+        ], [
+          "class"     => "pacmec-input pacmec-border pacmec-round-large number_format_",
+        ])
+        , __a('price_normal') . ' <span class="required">*</span>'
+        , ''
+        , ['pacmec-col s12 m3']
+      );
+      $form->addFieldWithLabel(\PACMEC\Form\Number::withNameAndValue('price_promo', $service->price_promo, 254, [
+          new \PACMEC\Form\Validation\RequiredValidation(__a('required_field'))
+        ], [
+          "class"     => "pacmec-input pacmec-border pacmec-round-large number_format_",
+        ])
+        , __a('price_promo') . ' <span class="required">*</span>'
+        , ''
+        , ['pacmec-col s12 m3']
+      );
+      $form->addFieldWithLabel(new \PACMEC\Form\Textarea($service->observations, [
+          'class'  => 'pacmec-input pacmec-border pacmec-round-large',
+          "name"   => "observations",
+        ], [
+        ])
+        , __a('observations')
+        , 'Estas observaciones solo serán visibles por el personal que gestiona las ordenes/servicios/servicios.'
+        , [
+      ]);
+      $form->Code .= \PHPStrap\Util\Html::clearfix();
+      if(infosite('grapesjs_enable')==true) $form->Code .= "<br><div class=\"pacmec-col s12\" id=\"gjs\">{$description_full}<style>{$description_full_style}</style></div>";
+      $form->addFieldWithLabel(new \PACMEC\Form\Textarea($description_full, [
+          'class'  => 'pacmec-input pacmec-border pacmec-round-large',
+          "name"   => "description_full",
+          "id"     => "html",
+        ], [
+          #new \PACMEC\Form\Validation\RequiredValidation(__a('required_field'))
+          #, new \PACMEC\Form\Validation\MinLengthValidation(6)
+        ])
+        , __a('description_full') . ' <span class="required">*</span>'
+        , ''
+        , [
+          ((infosite('grapesjs_enable')==true) ? "hidden" : "")
+      ]);
+      $form->addFieldWithLabel(new \PACMEC\Form\Textarea($description_full_style, [
+          'class'=>'pacmec-input pacmec-border pacmec-round-large',
+          "name" => "description_full_style",
+          "id" => "css",
+        ], [
+        ])
+        , __a('description_full_style')
+        , ''
+        , [
+          ((infosite('grapesjs_enable')==true) ? "hidden" : "")
+      ]);
+      $form->Code .= \PACMEC\Util\Html::tag('div', "<br/>".\pacmec_captcha_widget_html("pacmec-captcha-".randString(11), $form_slug, 'custom-pacmec'), ['pacmec-content']);
+      $form->Code .= "<div class=\"clearfix\"><br></div>";
+      $btn_submit = new \PACMEC\Form\Submit(__a('btn_save'), [
+        'id'=>"submit-{$form_slug}",
+        'name'=>"submit-{$form_slug}",
+        "class" => 'pacmec-btn pacmec-teal pacmec-round-large'
+      ]);
+      $form->Code .= "<div class=\"clearfix\"><br></div>";
+      $btn_submit = new \PACMEC\Form\Submit(__a('btn_save'), [
+        'id'=>"submit-{$form_slug}",
+        'name'=>"submit-{$form_slug}",
+        "class" => 'pacmec-btn pacmec-teal pacmec-round-large'
+      ]);
+
+      $btn_submit->addHrefButton(__a('btn_cancel'), ((isset($PACMEC['fullData']['redirect'])) ? $PACMEC['fullData']['redirect'] : __url_s("/%admin_blog_slug%")), ['pacmec-btn pacmec-gray pacmec-round-large']);
+
+      $form->Code .= $btn_submit;
+
+      if (infosite('grapesjs_enable')==true) {
+        $form->Code .= '
+        <style>
+          .gjs-block {
+            width: auto;
+            height: auto;
+            min-height: auto;
+          }
+        </style>
+        <script>
+          var editor = grapesjs.init({
+            height: \'calc(60vh)\',
+            container: \'#gjs\',
+            showOffsets: true,
+            fromElement: true,
+            noticeOnUnload: false,
+            storageManager: false,
+            // plugins: ["gjs-preset-webpage", "gjs-preset-newsletter"],
+            plugins: [
+              "gjs-preset-webpage"
+              ,"gjs-preset-newsletter"
+            ],
+          });
+          const htmlTextarea = document.getElementById(\'html\')
+          const cssTextarea = document.getElementById(\'css\')
+          const updateTextarea = (component, editor)=>{
+            const e = component.em.get("Editor");
+            htmlTextarea.value= e.getHtml();
+            cssTextarea.value= e.getCss();
+          }
+          editor.on(\'component:add\', updateTextarea);
+          editor.on(\'component:update\', updateTextarea);
+          editor.on(\'component:remove\', updateTextarea);
+          const updateInstance = () => {
+            editor.setComponents(htmlTextarea.value)
+            editor.setStyle(cssTextarea.value)
+          }
+          document.getElementById(\'submit-'.$form_slug.'\').onclick=updateInstance;
+        </script>';
+      }
+      $html .= $form;
+    } else {
+      $html .= "servicio no encontrado";
+    }
+  }
+  return $html;
+}
+add_shortcode('pacmec-admin-services-table', 'pacmec_admin_services_table');
 
 function pacmec_admin_products_table($atts, $content="")
 {

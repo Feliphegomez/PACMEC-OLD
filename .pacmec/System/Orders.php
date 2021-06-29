@@ -91,6 +91,11 @@ class Orders extends \PACMEC\System\BaseRecords
             //$this->discounts += $item->discounts;
             $this->items[] = $item;
             break;
+          case 'service':
+            $this->subtotal += $item->subtotal;
+            //$this->discounts += $item->discounts;
+            $this->items[] = $item;
+            break;
           case 'discount':
             $item->description .= $item->discounts;
             $this->items[] = $item;

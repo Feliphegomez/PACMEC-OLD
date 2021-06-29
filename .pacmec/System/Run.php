@@ -62,8 +62,9 @@ class Run
     add_style_head(siteinfo('siteurl')   . "/.pacmec/assets/css/plugins.css", ["rel"=>"stylesheet", "type"=>"text/css", "charset"=>"UTF-8"], 0.99, false);
     add_scripts_head(siteinfo('siteurl') . "/.pacmec/assets/js/plugins.js",   ["type"=>"text/javascript", "charset"=>"UTF-8"], 1, false);
     // add_scripts_head(siteinfo('siteurl') . "/.pacmec/assets/dist/sweetalert2/sweetalert2.all.min.js",    ["type"=>"text/javascript", "charset"=>"UTF-8"], 0, false);
-    // add_scripts_head(siteinfo('siteurl') . "/.pacmec/assets/dist/vue/vue.min.js",    ["type"=>"text/javascript", "charset"=>"UTF-8"], 0, false);
-    // add_scripts_head(siteinfo('siteurl') . "/.pacmec/assets/dist/vue/vue-router.js",    ["type"=>"text/javascript", "charset"=>"UTF-8"], 0, false);
+    add_scripts_head(siteinfo('siteurl') . "/.pacmec/assets/dist/vue/vue.min.js",    ["type"=>"text/javascript", "charset"=>"UTF-8"], 0, false);
+    add_scripts_head(siteinfo('siteurl') . "/.pacmec/assets/dist/vue/vue-router.js",    ["type"=>"text/javascript", "charset"=>"UTF-8"], 0, false);
+    add_scripts_head(siteinfo('siteurl') . "/.pacmec/assets/dist/axios/axios.js"."?&cache=".rand(),    ["type"=>"text/javascript", "charset"=>"UTF-8"], 0, false);
     // add_scripts_head(siteinfo('siteurl') . "/.pacmec/assets/js/sdk.js"."?&cache=".rand(),   ["type"=>"text/javascript", "charset"=>"UTF-8"], 0, false);
 
     add_style_head(siteinfo('siteurl')   . "/.pacmec/assets/dist/bootstrap-tagsinput/dist/bootstrap-tagsinput.css",  ["rel"=>"stylesheet", "type"=>"text/css", "charset"=>"UTF-8"], 1, false);
@@ -541,8 +542,21 @@ class Run
       $model_route = $PACMEC['route'];
       if($model_route->id>0&&$model_route->is_actived==true){
         //
-        pacmec_add_meta_tag('title', ($GLOBALS['PACMEC']['route']->title));
-        pacmec_add_meta_tag('description', ($GLOBALS['PACMEC']['route']->description));
+        pacmec_add_meta_tag('title', strip_tags($GLOBALS['PACMEC']['route']->title));
+        pacmec_add_meta_tag('description', trim(
+          str_replace(
+            [
+              "          ",
+              "         ",
+              "        ",
+              "       ",
+              "      ",
+              "     ",
+              "    ",
+              "   ",
+              "  ",
+            ], " ", str_replace(["\r", "\t", "\n"], " ", strip_tags($GLOBALS['PACMEC']['route']->description)))
+        ));
         pacmec_add_meta_tag('keywords', ($GLOBALS['PACMEC']['route']->title).",".$GLOBALS['PACMEC']['route']->keywords);
       } else {
         pacmec_add_meta_tag('title', infosite('sitename'));

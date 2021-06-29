@@ -85,9 +85,6 @@ webmail_slug=                               correo
 
 approved_payments=                          Pagos Aprobados
 
-admin_blog_slug=                            admin-blog
-admin_products_title=                       Admin. Productos
-admin_products_slug=                        admin-products
 
 publish=                                    Publicado
 draft=                                      Borrador
@@ -236,7 +233,6 @@ hash=                                       Contraseña
 confirm_hash=                               Confirme la contraseña
 permissions=                                Permisos
 
-services_slug=                              servicios
 
 shop=                                       Tienda
 shop_title=                                 Explora nuestra tienda
@@ -245,7 +241,7 @@ cart_slug=                                  carrito
 cart_btn=                                   Ir al carrito
 shopping_cart=                              Carrito de compras
 cart_title=                                 Carrito
-view_products_slug=                         ver-producto
+
 stores=                                     Tiendas
 money_return_title=                         Paga a tu medida
 money_return_content=                       Realiza pagos parciales
@@ -258,10 +254,16 @@ order_discount_content=                     Cupones y Descuentos
 new_arrivals=                               Los recién llegados
 products=                                   Productos
 products_view=                              Viendo producto
+
 sku_ref=                                    SKU
+slug_ref=                                   REF
+
 common_names=                               Tambien conocido como:
 delivery_territory=                         Entrega en todo el territorio
+
 unid_product_view=                          Este producto se vende en
+unid_service_view=                          Este servicio se vende en
+
 price_filter=                               Filtrar por precio
 order_by_sku_asc=                           Codigo ASC
 order_by_price_asc=                         Precio ASC
@@ -360,10 +362,30 @@ coupon_code=                                Cod. cupón
 coupon_prev_txt=                            Tiene un cupón?
 coupon_click_apply=                         Haga clic aquí para ingresar su código
 
+admin_orders_slug=                          solicitudes
+
+shopping_assistant_slug=                    Compra-asistida
+shopping_assistant=                         Asistente de compras
+how_to_buy=                                 Como comprar
+
 admin_galleries_shop_title=                 Galeria de la tienda
 admin_galleries_shop_slug=                  shop-galeries
 
+admin_blog_slug=                            admin-blog
+
+admin_products_title=                       Admin. Productos
+admin_products_slug=                        admin-products
+view_products_slug=                         ver-producto
+
 services=                                   Servicios
+services_slug=                              servicios
+admin_services_title=                       Admin. Servicios
+admin_services_slug=                        admin-services
+view_services_slug=                         ver-servicio
+
+services_title=                             Nuestros servicios
+portfolio_title=                            Nuestro portafolio
+
 pricing_plan=                               Planes
 
 IndianRed=                                  IndioRojo

@@ -5,6 +5,11 @@
 */
 try {
   console.log("SDK RUN.");
+  const PACMEC_BACK = {
+    statusNotification(){
+
+    },
+  };
 } catch (e) {
   console.error("PACMEC::Error::SDK - FIN");
   console.log(e);

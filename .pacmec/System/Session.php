@@ -60,9 +60,19 @@ class Session
       switch ($GLOBALS['PACMEC']['fullData']['type']) {
         case 'product':
            if(isset($GLOBALS['PACMEC']['fullData']['product_id'])){
-             $result = $this->add_in_cart($GLOBALS['PACMEC']['fullData']['product_id'], $GLOBALS['PACMEC']['fullData']['quantity']);
+
+             $result = $this->add_in_cart($GLOBALS['PACMEC']['fullData']['product_id'], $GLOBALS['PACMEC']['fullData']['quantity'], 'product');
              $url_cart = __url_s('/%cart_slug%');
-             //$msg_add_product = \PHPStrap\Util\Html::tag('div', __a($result), ['alert alert-success']);
+             echo $msg_add_product = \PHPStrap\Util\Html::tag('div', __a($result), ['alert alert-success']);
+             //echo "<meta http-equiv=\"refresh\" content=\"0;\" />";
+             //header("Refresh:0");
+           }
+          break;
+        case 'service':
+           if(isset($GLOBALS['PACMEC']['fullData']['service_id'])){
+             $result = $this->add_in_cart($GLOBALS['PACMEC']['fullData']['service_id'], $GLOBALS['PACMEC']['fullData']['quantity'], 'service');
+             $url_cart = __url_s('/%cart_slug%');
+             echo $msg_add_service = \PHPStrap\Util\Html::tag('div', __a($result), ['alert alert-success']);
              //echo "<meta http-equiv=\"refresh\" content=\"0;\" />";
              //header("Refresh:0");
            }
@@ -148,6 +158,10 @@ class Session
         switch ($pedid->type) {
           case 'product':
             $data = new \PACMEC\System\Product((object) ['id'=>$pedid->ref_id]);
+            $this->subtotal_cart += ($data->price*$pedid->quantity);
+            break;
+          case 'service':
+            $data = new \PACMEC\System\Service((object) ['id'=>$pedid->ref_id]);
             $this->subtotal_cart += ($data->price*$pedid->quantity);
             break;
           default:
@@ -607,7 +621,7 @@ class Session
     }
   }
 
-  public function add_in_cart($item, $quantity, $type='product')
+  public function add_in_cart($item, $quantity, $type='undefined')
   {
     try {
       switch ($type) {
@@ -657,6 +671,52 @@ class Session
           }
           return "add_to_cart_fail";
           break;
+        case 'service':
+          // $service = null;
+          if(is_numeric($item)){
+            $search_sql = "SELECT * FROM `{$GLOBALS['PACMEC']['DB']->getTableName('shoppings_carts')}` WHERE `session_id`=? AND `type`=? AND `ref_id`=?";
+            $search = $GLOBALS['PACMEC']['DB']->FetchObject($search_sql, [
+              session_id(),
+              $type,
+              $item
+            ]);
+            if($search !== false) {
+                $this->update_quantity_in_cart($item, ($quantity+$search->quantity), $type);
+            } else {
+              $service = new \PACMEC\System\Service((object) ['id'=>$item]);
+              if($service->isValid()){
+                $a_c  = (int) $service->is_active;
+                if($a_c>0){
+                  $a_cc = !isset($this->shopping_cart["service:{$service->id}"]) ? 0 : $this->shopping_cart["service:{$service->id}"]->quantity;
+                  $a_i = ($a_c >= ($a_cc+$quantity)) ? ($a_cc+$quantity) : $a_c;
+                  $id_shop = !isset($this->shopping_cart["service:{$service->id}"]) ? null : $this->shopping_cart["service:{$service->id}"]->id;
+                  $sql = "INSERT INTO `{$GLOBALS['PACMEC']['DB']->getTableName('shoppings_carts')}` (`session_id`, `type`, `ref_id`, `quantity`)
+                  SELECT ?, ?, ?, ?
+                  WHERE NOT EXISTS(SELECT 1 FROM `{$GLOBALS['PACMEC']['DB']->getTableName('shoppings_carts')}` WHERE `session_id`=? AND `type`=? AND `ref_id`=?)";
+
+                  $result = $GLOBALS['PACMEC']['DB']->FetchObject($sql,
+                    [
+                      session_id(),
+                      $type,
+                      $item,
+                      $a_i,
+
+                      session_id(),
+                      $type,
+                      $item,
+                    ]
+                  );
+                  $this->refreshSession();
+                  //header("Location: ".$_SERVER['PHP_SELF']);
+                  return $result == true ? "add_to_cart_success" : "add_to_cart_fail";
+                } else {
+                  return "service_not_available";
+                }
+              }
+            }
+          }
+          return "add_to_cart_fail";
+          break;
         default:
           break;
       }
@@ -700,6 +760,37 @@ class Session
           }
           return "update_to_cart_fail";
           break;
+        case 'service':
+          // $service = null;
+          if(is_numeric($item)){
+            $service = new \PACMEC\System\Service((object) ['id'=>$item]);
+            if($service->isValid()){
+              $a_c  = (int) $service->is_active;
+              if($a_c>0){
+                $a_cc = !isset($this->shopping_cart["service:{$service->id}"]) ? 0 : $this->shopping_cart["service:{$service->id}"]->quantity;
+                $a_i = ($a_c >= ($quantity)) ? ($quantity) : $a_c;
+                $id_shop = !isset($this->shopping_cart["service:{$service->id}"]) ? null : $this->shopping_cart["service:{$service->id}"]->id;
+                $result = $GLOBALS['PACMEC']['DB']->FetchObject("UPDATE `{$GLOBALS['PACMEC']['DB']->getTableName('shoppings_carts')}`
+                SET `session_id`=?, `type`=?, `ref_id`=?, `quantity`=? WHERE `id`=?",
+                [
+                  session_id(),
+                  $type,
+                  $item,
+                  $a_i,
+                  $id_shop,
+                ]);
+                $this->refreshSession();
+                //unset($_POST);
+                //header("Location: ".$_SERVER['PHP_SELF']);
+
+                return $result == true ? "update_to_cart_success" : "update_to_cart_fail";
+              } else {
+                return "service_not_is_active";
+              }
+            }
+          }
+          return "update_to_cart_fail";
+          break;
         default:
           break;
       }
@@ -734,18 +825,31 @@ class Session
     */
     $rows = '';
     foreach ($items as $key=>$item) {
-      $url_item = isset($item->data->link_href) ? $item->data->link_href : "#";
+      $url_item = isset($item->data->link_view) ? $item->data->link_view : "#";
       $thumb_uri = (isset($item->data->thumb) ? $item->data->thumb : infosite('default_picture'));
       $img = \PHPStrap\Util\Html::tag('img', '', ['img-fluid'], ['src'=>$thumb_uri], true);
+      /*
+      switch ($item->type) {
+        case 'product':
+          $name = ;
+          break;
+        default:
+          $name = "Sin parametrizar";
+          break;
+      }
+      */
+
       $rows .= \PHPStrap\Util\Html::tag('tr',
           \PHPStrap\Util\Html::tag('td', \PHPStrap\Util\Html::tag('a', $img, [], ['href'=>$url_item]), ['pro-thumbnail'], [])
-        . \PHPStrap\Util\Html::tag('td', \PHPStrap\Util\Html::tag('a', $item->data->name, [], ['href'=>$url_item]), ['pro-title'], [])
+        . \PHPStrap\Util\Html::tag('td', \PHPStrap\Util\Html::tag('a',
+          ($item->data->name)
+        , [], ['href'=>$url_item]), ['pro-title'], [])
         . \PHPStrap\Util\Html::tag('td', formatMoney($item->data->price), ['pro-price'], [])
         // . \PHPStrap\Util\Html::tag('td', "{$item->quantity} {$item->data->unid}", ['pro-quantity'], [])
         . \PHPStrap\Util\Html::tag('td',
             \PHPStrap\Util\Html::tag('div',
               \PHPStrap\Util\Html::tag('div',
-                \PHPStrap\Util\Html::tag('input', '', ['cart-plus-minus-box'], ["name"=> $key, "value"=>$item->quantity, "type"=>"text", "max"=>((int) $item->data->available), "step"=>"1"], true)
+                \PHPStrap\Util\Html::tag('input', '', ['cart-plus-minus-box'], ["name"=> $key, "value"=>$item->quantity, "type"=>"text", "max"=>($item->type == 'product' ? ((int) $item->data->available) : 1), "step"=>"1"], true)
               , ['cart-plus-minus'], [])
             , ['quantity'], [])
           , ['pro-quantity'], [])

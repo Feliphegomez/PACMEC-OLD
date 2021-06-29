@@ -63,6 +63,19 @@ class OrdersItems extends \PACMEC\System\BaseRecords
             if(!empty($this->discount_percentage)) $this->discounts += ($this->subtotal*$this->discount_percentage)/100;
           }
           break;
+        case 'service':
+          $service = new \PACMEC\System\Service((object) ["id"=>$this->ref]);
+          if($service->isValid()){
+            $this->name = $service->name;
+            $this->description = __a('slug_ref') . ": " . $service->slug;
+            $this->data = $service;
+            if($this->unit_price == null) $this->unit_price = $service->price;
+            $this->subtotal = $this->unit_price * $this->quantity;
+            $this->unid = $service->unid;
+            if(!empty($this->discount_amount)) $this->discounts += $this->discount_amount;
+            if(!empty($this->discount_percentage)) $this->discounts += ($this->subtotal*$this->discount_percentage)/100;
+          }
+          break;
         case 'discount':
           $this->name = $obj->ref;
           $this->description = "$ ";
